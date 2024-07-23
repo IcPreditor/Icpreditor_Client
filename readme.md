@@ -28,3 +28,5 @@ courseCode string
 curriculumCode string (x/2017)
 
 ## Artmap Fuzzy
+
+Utilizando biblioteca 'python_artmap' disponibilizada no Git de David Vinicios https://github.com/DavidVinicius/python_artmap
