@@ -1,3 +1,6 @@
+#ReadMe Provisório
+
+
 data/credentials.json
 
 {"credentials":{"username":"matricula","password":"senhaSCAOS#"}}
