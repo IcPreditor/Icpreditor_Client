@@ -21,7 +21,7 @@ def get_student_data():
             "inactivityReason": None,
             "affirmativePolicy": "L1",
             "secondarySchoolType": "PUBLICA",
-            "courseCode": "13301200",
+            "courseCode": "13311110",
             "curriculumCode": "2018"
         },
         {
