@@ -1,19 +1,18 @@
 import numpy as np
 from random import choices,randint,seed
 from python_artmap import ARTMAPFUZZY
-import dataGenerator.bancoFalso as bancoFalso
+import bancoFalso as bf
 
-
-input,output = bancoFalso.bancoFalso(2000)
-
+input,output = bf.bancoFalso(2000)
 
 if output[0][0]==0:
+    print(output[0][0])
+    print(0)
     aux3 = [0,1]
 else:
+    print(output[0][0])
+    print(1)
     aux3 = [1,0]
-#print(input)
-print(output)
-
 
 for rb_int in range(1,10,2):
     rb = rb_int/10.0
@@ -21,8 +20,6 @@ for rb_int in range(1,10,2):
         ra = ra_int/10.0
         ArtMap = ARTMAPFUZZY(input, output, rhoARTa=ra, rhoARTb=rb)
         ArtMap.train()
-
-
 
         n = len(input)
 
@@ -39,6 +36,7 @@ for rb_int in range(1,10,2):
 
             if (output[y]==aux3[resultado]):
                 sucesso += 1
+
         print("RhoA: " + str(ra))
         print("RhoB: " + str(rb))
         print(str(sucesso)+"/"+str(n))
