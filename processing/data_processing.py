@@ -5,6 +5,7 @@ def get_student_data():
         {
             "age": 35,
             "gender": "FEMININO",
+            "nationality": "BRASILEIRA",
             "maritalStatus": "DESCONHECIDO",
             "status": "INATIVO",
             "inactivityReason": "DESISTENCIA",
@@ -16,6 +17,7 @@ def get_student_data():
         {
             "age": 22,
             "gender": "MASCULINO",
+            "nationality": "BRASILEIRA",
             "maritalStatus": "SOLTEIRO",
             "status": "ATIVO",
             "inactivityReason": None,
@@ -27,6 +29,7 @@ def get_student_data():
         {
             "age": 27,
             "gender": "OUTRO",
+            "nationality": "BRASILEIRA",
             "maritalStatus": "CASADO",
             "status": "INATIVO",
             "inactivityReason": "TRANSFERENCIA",
@@ -38,6 +41,7 @@ def get_student_data():
         {
             "age": 30,
             "gender": "DESCONHECIDO",
+            "nationality": "ESTRANGEIRA",
             "maritalStatus": "DIVORCIADO",
             "status": "GRADUADO",
             "inactivityReason": None,
@@ -49,6 +53,7 @@ def get_student_data():
         {
             "age": 29,
             "gender": "MASCULINO",
+            "nationality": "BRASILEIRA",
             "maritalStatus": "SEPARADO",
             "status": "INATIVO",
             "inactivityReason": "ABANDONO",

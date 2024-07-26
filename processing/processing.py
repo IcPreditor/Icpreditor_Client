@@ -12,7 +12,7 @@ binaryTurnos = {
 
 def getTurno(course):
     saida = '00'
-    for c in json.load(open("data/coursesActives.json")):
+    for c in json.load(open("data/coursesActives.json", encoding='utf-8')):
         if c['code'] == course:
             saida = binaryTurnos[c["name"][-1]]
             break
@@ -27,12 +27,24 @@ df["turno"] = df.apply(lambda row: getTurno(row["courseCode"])  , axis=1)
 # Mapeamento binário para valores categóricos
 binary_mappings = {
     "gender": {"MASCULINO": "00", "FEMININO": "01", "OUTRO": "10", "DESCONHECIDO": "11"},
+    "nationality": {"BRASILEIRA": "00", "ESTRANGEIRA": "01"},
     "maritalStatus": {"SOLTEIRO": "000", "CASADO": "001", "SEPARADO": "010", "VIUVO": "011", "DIVORCIADO": "100", "DESCONHECIDO": "101"},
     "status": {"GRADUADO": "00", "ATIVO": "01", "INATIVO": "10"},
     "inactivityReason": {"ABANDONO": "000", "DESCONHECIDO": "001", "TRANSFERENCIA": "010", "CONCLUIU_MAS_NAO_COLOU_GRAU": "011", "DESISTENCIA": "100"},
     "affirmativePolicy": {"A0": "000", "L1": "001", "L2": "010", "L5": "011", "L6": "100", "L9": "101", "L10": "110", "L13": "111", "L14": "1000", "BONUS": "1001"},
     "secondarySchoolType": {"PRIVADA": "00", "PUBLICA": "01", "MAJORITARIAMENTE_PUBLICA": "10", "MAJORITARIAMENTE_PRIVADA": "11", "DESCONHECIDA": "100"}
 }
+
+#Ajuste do secondarySchoolType desconhecido
+def adjust_secondary_school_type(row):
+    if row["secondarySchoolType"] == "DESCONHECIDA":
+        if row["affirmativePolicy"] == "A0":
+            return "PRIVADA"    
+        else:
+            return "PUBLICA"
+    return row["secondarySchoolType"]
+
+df["secondarySchoolType"] = df.apply(adjust_secondary_school_type, axis=1)
 
 # Converter valores categóricos para sua representação binária
 for col, mapping in binary_mappings.items():
@@ -52,3 +64,4 @@ evaded_list = df['evaded'].tolist()
 # Visualizar o resultado
 print(binary_strings)
 print(evaded_list)
+print(df)
