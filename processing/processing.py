@@ -1,24 +1,10 @@
 import json
 import pandas as pd
 import numpy as np
+from dicTurno import getTurno
 
-binaryTurnos = {
-    "M":'00',
-    "V":'01',
-    "N":'10',
-    "D":'11'
-}
 
-def getTurno(course):
-    saida = '00'
-    for c in json.load(open("data/coursesActives.json", encoding='utf-8')):
-        if c['code']=="19107110" or c['code']=="12205100" or c['code']=="21205100": #exceções
-            saida = '11'
-        elif c['code'] == course:
-            saida = binaryTurnos[c["name"][-1]]
-            break
-    
-    return saida
+dicTurnos = getTurno()
 
 def load_large_json(file_path):
     return pd.read_json(file_path)
@@ -32,7 +18,7 @@ df = load_large_json(file_path)
 # Obter dados dos estudantes
 #df = get_student_data()
 #Fazer lista de turnos
-df["turno"] = df.apply(lambda row: getTurno(row["courseCode"])  , axis=1)
+df["turno"] = df.apply(lambda row: row["courseCode"], axis=1)
 
 # Mapeamento binário para valores categóricos
 binary_mappings = {
