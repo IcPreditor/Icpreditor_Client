@@ -12,7 +12,9 @@ binaryTurnos = {
 def getTurno(course):
     saida = '00'
     for c in json.load(open("data/coursesActives.json", encoding='utf-8')):
-        if c['code'] == course:
+        if c['code']=="19107110" or c['code']=="12205100" or c['code']=="21205100": #exceções
+            saida = '11'
+        elif c['code'] == course:
             saida = binaryTurnos[c["name"][-1]]
             break
     
