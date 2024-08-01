@@ -1,7 +1,6 @@
 import json
 import pandas as pd
 import numpy as np
-from data_processing import get_student_data
 
 binaryTurnos = {
     "M":'00',
@@ -18,9 +17,18 @@ def getTurno(course):
             break
     
     return saida
+
+def load_large_json(file_path):
+    return pd.read_json(file_path)
+
+# Caminho para o arquivo JSON
+file_path = r'C:\Users\Usuário\Icpreditor\data\students.json'
+
+# Carregar os dados
+df = load_large_json(file_path)
     
 # Obter dados dos estudantes
-df = get_student_data()
+#df = get_student_data()
 #Fazer lista de turnos
 df["turno"] = df.apply(lambda row: getTurno(row["courseCode"])  , axis=1)
 
@@ -52,9 +60,18 @@ for col, mapping in binary_mappings.items():
 # Converter valores numéricos para binário
 df["age"] = df["age"].apply(lambda x: format(int(x), '08b') if pd.notnull(x) else "0"*8)
 df["courseCode"] = df["courseCode"].apply(lambda x: format(int(x), '020b') if pd.notnull(x) else "0"*20)
-df["curriculumCode"] = df["curriculumCode"].apply(lambda x: ''.join(format(ord(i), '08b') for i in x) if pd.notnull(x) else "0"*32)
+#df["curriculumCode"] = df["curriculumCode"].apply(lambda x: ''.join(format(ord(i), '08b') for i in x) if pd.notnull(x) else "0"*32)
+df["curriculumCode"] = df["curriculumCode"].apply(
+    lambda x: ''.join(format(ord(i), '08b') for i in str(x)) if pd.notnull(x) else "0"*32
+)
+# Colunas a serem mantidas
+columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "status", "inactivityReason", "affirmativePolicy", "secondarySchoolType", "courseCode", "curriculumCode"]
+
+# Remover todas as colunas que não estão em columns_to_keep
+df = df.drop(columns=[col for col in df.columns if col not in columns_to_keep])
 # Substituir NaN por binário de 0s
 df.fillna("0", inplace=True)
+df = df.astype(str)
 #Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
 df['evaded'] = df.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
 #Concatenar os resultados em uma string binária por linha
@@ -63,5 +80,5 @@ evaded_list = df['evaded'].tolist()
 
 # Visualizar o resultado
 print(binary_strings)
-print(evaded_list)
-print(df)
+#print(evaded_list)
+#print(df)
