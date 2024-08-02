@@ -6,8 +6,7 @@ from dicTurno import getTurno
 # Carrega dicionario com codeCurso/turno
 dicTurnos = getTurno()
 def whatTurno(row):
-    if row["courseCode"] is not None:
-        return dicTurnos.get(row["courseCode"])
+    return dicTurnos[str(row["courseCode"])]
 
 def load_large_json(file_path):
     return pd.read_json(file_path)
@@ -34,12 +33,12 @@ def getInputOutput():
     # Mapeamento binário para valores categóricos
     binary_mappings = {
         "gender": {"MASCULINO": "00", "FEMININO": "01", "OUTRO": "10", "DESCONHECIDO": "11"},
-        "nationality": {"BRASILEIRA": "00", "ESTRANGEIRA": "01"},
+        "nationality": {"BRASILEIRA": "0", "ESTRANGEIRA": "1"},
         "maritalStatus": {"SOLTEIRO": "000", "CASADO": "001", "SEPARADO": "010", "VIUVO": "011", "DIVORCIADO": "100", "DESCONHECIDO": "101"},
         "status": {"GRADUADO": "00", "ATIVO": "01", "INATIVO": "10"},
         "inactivityReason": {"ABANDONO": "000", "DESCONHECIDO": "001", "TRANSFERENCIA": "010", "CONCLUIU_MAS_NAO_COLOU_GRAU": "011", "DESISTENCIA": "100"},
-        "affirmativePolicy": {"A0": "000", "L1": "001", "L2": "010", "L5": "011", "L6": "100", "L9": "101", "L10": "110", "L13": "111", "L14": "1000", "BONUS": "1001"},
-        "secondarySchoolType": {"PRIVADA": "00", "PUBLICA": "01", "MAJORITARIAMENTE_PUBLICA": "10", "MAJORITARIAMENTE_PRIVADA": "11", "DESCONHECIDA": "100"}
+        "affirmativePolicy": {"A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"},
+        "secondarySchoolType": {"PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"}
     }
 
 
@@ -59,18 +58,17 @@ def getInputOutput():
     # Remover todas as colunas que não estão em columns_to_keep
     df = df.drop(columns=[col for col in df.columns if col not in columns_to_keep])
     # Substituir NaN por binário de 0s
-    df.fillna("0", inplace=True)
+    df["nationality"] = df["nationality"].fillna("0")
+    df["inactivityReason"] = df["inactivityReason"].fillna("000")
     df = df.astype(str)
     #Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
     df['evaded'] = df.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
     #Concatenar os resultados em uma string binária por linha
-    binary_strings = df.apply(lambda row: [int("".join(row.values))], axis=1).to_list()
-    evaded_list = df["evaded"].apply(lambda row: [int("".join(row))]).to_list()
-    #evaded_list = df['evaded'].tolist()
-
-    return np.array(binary_strings),np.array(evaded_list)
+    binary_strings = df.apply(lambda row: ["".join(row.values)], axis=1).to_list()
+    evaded_list = df["evaded"].apply(lambda row:[ int("".join(row))]).to_list()
+    return binary_strings,evaded_list
 
 # Visualizar o resultado
-#print(binary_strings)
+
 #print(evaded_list)
 #print(df)

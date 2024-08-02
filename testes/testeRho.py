@@ -9,16 +9,18 @@ import processing
 
 #input,output = bf.bancoFalso(2000)
 input,output = processing.getInputOutput()
-print(input)
-print(output)
+input = [list(item[0]) for item in input]
+input = np.array(input)
+input = input.astype(int)
+output = np.array(output)
 
 if output[0][0]==0:
-    print(output[0][0])
-    print(0)
+    #print(output[0][0])
+    #print(0)
     aux3 = [0,1]
 else:
-    print(output[0][0])
-    print(1)
+    #print(output[0][0])
+    #print(1)
     aux3 = [1,0]
 
 for rb_int in range(1,10,2):
