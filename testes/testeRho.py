@@ -2,8 +2,15 @@ import numpy as np
 from random import choices,randint,seed
 from python_artmap import ARTMAPFUZZY
 import bancoFalso as bf
+import sys
+# caution: path[0] is reserved for script path (or '' in REPL)
+sys.path.insert(1, r'C:\Users\m5253\VisualStudio\Icpreditor\processing')
+import processing
 
-input,output = bf.bancoFalso(2000)
+#input,output = bf.bancoFalso(2000)
+input,output = processing.getInputOutput()
+print(input)
+print(output)
 
 if output[0][0]==0:
     print(output[0][0])

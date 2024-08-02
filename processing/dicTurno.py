@@ -16,5 +16,5 @@ def getTurno():
         else:
             turno = binaryTurnos[c["name"][-1]]
             dicTurno[c['code']] = turno
-    dicTurno[None] = "00"
+    return dicTurno
 #print(dicTurno)
