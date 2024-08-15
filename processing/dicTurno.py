@@ -1,3 +1,4 @@
+#Functions over courses
 import json
 binaryTurnos = {
     "M":'00',
@@ -9,12 +10,11 @@ binaryTurnos = {
 dicTurno = {}
 
 def getTurno():
-    for c in json.load(open("data/coursesActives.json", encoding='utf-8')):
-        #Medicina Engenharia Elétrica Matématica
-        if c['code']=="12205100" or c['code']=="21205100" or c['code']=="19107110" or c['code']=="14123100": #exceções
-            dicTurno[c['code']] = '11'
+    for course in json.load(open("data/coursesActives.json", encoding='utf-8')):
+        # Exceções Medicina Engenharia Elétrica Matématica
+        if course['code']=="12205100" or course['code']=="21205100" or course['code']=="19107110" or course['code']=="14123100": #exceções
+            dicTurno[course['code']] = '11'
         else:
-            turno = binaryTurnos[c["name"][-1]]
-            dicTurno[c['code']] = turno
+            turno = binaryTurnos[course["name"][-1]]
+            dicTurno[course['code']] = turno
     return dicTurno
-#print(dicTurno)
