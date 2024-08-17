@@ -1,4 +1,5 @@
 # Auxiliary functions for testing
+#Guilherme Fernandes, 2024
 import numpy as np
 from random import choices,randint
 from python_artmap import ARTMAPFUZZY

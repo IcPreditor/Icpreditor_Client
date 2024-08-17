@@ -1,4 +1,5 @@
 #Functions over courses
+#Guilherme Fernandes, 2024
 import json
 binaryTurnos = {
     "M":'00',

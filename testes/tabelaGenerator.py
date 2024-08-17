@@ -1,4 +1,7 @@
 #Test values of rhoARTa and rhoARTb
+#Eduardo Augusto, 2024
+#Guilherme Fernandes, 2024
+
 import numpy as np
 from python_artmap import ARTMAPFUZZY
 import bancoFalso as bf
@@ -40,40 +43,54 @@ print("##Treinamento Finalizado##")
 #Number of elements in the array of test
 num_ele = len(teste_in)
 
-sucesso = 0
-amostra_nao_evasao = 0
-sucesso_nao_evasao = 0
-amostra_evasao = 0
-sucesso_evasao = 0
+#Variables, for statistical reasons
+sample_not_evasion = 0
+success_not_evasion = 0
+sample_evasion = 0
+success_evasion = 0
 
 print("##Iniciando Teste##")
 
 for y in range(num_ele):
-    resultado = ArtMap.test(teste_in[y]).get("index")
+    result = ArtMap.test(teste_in[y]).get("index")
     if(teste_out[y]==0):
-        amostra_nao_evasao += 1 
+        sample_not_evasion += 1 
     elif(teste_out[y]==1):
-        amostra_evasao += 1
+        sample_evasion += 1
 
-    if (teste_out[y]==aux3[resultado]):
-        sucesso += 1
-
+    if (teste_out[y]==aux3[result]):
         if(teste_out[y]==0):
-            sucesso_nao_evasao += 1 
+            success_not_evasion += 1 
         elif(teste_out[y]==1):
-            sucesso_evasao += 1
+            success_evasion += 1
 
 print("##Teste Finalizado##")
-erro_evasao = amostra_evasao-sucesso_evasao
-erro_nao_evasao = amostra_nao_evasao-sucesso_nao_evasao
-
+#Variables, for statistical reasons
+error_evasion = sample_evasion-success_evasion
+error_not_evasion = sample_not_evasion-success_not_evasion
+#Variables, percentages
+success_evation_per = (success_evasion/sample_evasion)*100
+success_not_evation_per = (success_not_evasion/sample_not_evasion)*100
+error_evasion_per = 100.0-success_evation_per
+error_not_evasion_per = 100.0-success_not_evation_per
+#Variables, Total
+sample_total = sample_evasion + sample_not_evasion
+success_total = success_evasion + success_not_evasion
+success_total_per = (success_total/sample_total)*100
+error_total = error_evasion + error_not_evasion
+error_total_per = (error_total/sample_total)*100
 print("Resultados:")
-print("{0:#^8} | {1:^19} | {2:^19} |".format("","Evasão","Não Evasão"))
-print("{0:8} | {1:^8} | {2:^8} | {3:^8} | {4:^8} |".format("","qtd","%","qtd","%"))
-print("{0:^8} | {1:^8} | {2:^8} | {3:^8} | {4:^8} |"
-      .format("Amostra",amostra_evasao,100.0,amostra_nao_evasao,100.0))
-print("{0:^8} | {1:^8} | {2:^8} | {3:^8} | {4:^8} |".
-      format("Acerto",sucesso_evasao,(sucesso_evasao/amostra_evasao)*100,sucesso_nao_evasao,(sucesso_nao_evasao/amostra_nao_evasao)*100))
-print("{0:^8} | {1:^8} | {2:^8} | {3:^8} | {4:^8} |"
-      .format("Erro",erro_evasao,(erro_evasao/amostra_evasao)*100,erro_nao_evasao,(erro_nao_evasao/amostra_nao_evasao)*100))
-print(sucesso/num_ele)
+print("{0:#^8} | {1:^19} | {2:^19} | {3:^19} |"
+      .format("","Evasão","Não Evasão","Total"))
+
+print("{0:8} | {1:^8} | {2:^8} | {3:^8} | {4:^8} | {5:^8} | {6:^8} |"
+      .format("","qtd","%","qtd","%","qtd","%"))
+
+print("{0:^8} | {1:^8} | {2:^8} | {3:^8} | {4:^8} | {5:^8} | {6:^8} |"
+      .format("Amostra",sample_evasion,100.0,sample_not_evasion,100.0,sample_total,100.0))
+
+print("{0:^8} | {1:^8} | {2:^8} | {3:^8} | {4:^8} | {5:^8} | {6:^8} |".
+      format("Acerto",success_evasion,success_evation_per,success_not_evasion,success_not_evation_per,success_total,success_total_per))
+
+print("{0:^8} | {1:^8} | {2:^8} | {3:^8} | {4:^8} | {5:^8} | {6:^8} |"
+      .format("Erro",error_evasion,error_evasion_per,error_not_evasion,error_not_evasion_per,error_total,error_total_per))

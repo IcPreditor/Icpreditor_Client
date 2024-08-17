@@ -1,3 +1,5 @@
+#Count occurrences of certain parameters
+#Guilherme Fernandes, 2024
 import json
 
 estadoCivil = 0
