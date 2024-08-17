@@ -6,26 +6,27 @@ import sys
 
 sys.path.insert(1, r'C:\Users\m5253\VisualStudio\Icpreditor\processing')
 import processing
-
+#All Students Data
 students_in,students_out = processing.getInputOutput()
 students_in = [list(item[0]) for item in students_in]
-i = len(students_in)
+len_students = len(students_in)
 
 ##Training Data
-input = np.array(students_in[0:i//2])
+input = np.array(students_in[0:len_students//2])
 input = input.astype(int)
-output = np.array(students_out[0:i//2])
+output = np.array(students_out[0:len_students//2])
 
 ##Testing Data
-teste_in = np.array(students_in[i//2:i-1])
+teste_in = np.array(students_in[len_students//2:len_students-1])
 teste_in = teste_in.astype(int)
-teste_out = np.array(students_out[i//2:i-1])
+teste_out = np.array(students_out[len_students//2:len_students-1])
 
 if output[0][0]==0:
     aux3 = [0,1]
 else:
     aux3 = [1,0]
 
+#rhoARTa AND rhoARTb
 ra = 0.1
 rb = 0.1
 
