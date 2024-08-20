@@ -68,6 +68,10 @@ dataframe["courseCode"] = dataframe["courseCode"].apply(lambda x: format(int(x),
 dataframe["curriculumCode"] = dataframe["curriculumCode"].apply(
     lambda x: ''.join(format(ord(i), '08b') for i in str(x)) if pd.notnull(x) else "0"*32
 )
+
+#Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
+dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
+evaded_list = dataframe['evaded'].tolist()
 # Colunas a serem mantidas
 columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "courseCode", "curriculumCode"]
 
@@ -82,10 +86,4 @@ binary_strings = dataframe.apply(lambda row: "".join(row.values), axis=1).to_lis
 print(binary_strings)
 
 # Visualizar o resultado
-
-#print(evaded_list)
-print(dataframe.columns)
-
-#Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
-#dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
-#evaded_list = dataframe['evaded'].tolist()
+print(evaded_list)
