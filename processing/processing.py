@@ -1,22 +1,23 @@
 import json
 import pandas as pd
 import numpy as np
+from dicTurno import getTurno
 
-binaryTurnos = {
-    "M":'00',
-    "V":'01',
-    "N":'10',
-    "D":'11'
-}
+#    "gender": {"MASCULINO": "00", "FEMININO": "01", "OUTRO": "10", "DESCONHECIDO": "11"},
+#    "nationality": {"BRASILEIRA": "0", "ESTRANGEIRA": "1"},
+#    "maritalStatus": {"SOLTEIRO": "000", "CASADO": "001", "SEPARADO": "010", "VIUVO": "011", "DIVORCIADO": "100", "DESCONHECIDO": "101"},
+#    "status": {"GRADUADO": "00", "ATIVO": "01", "INATIVO": "10"},
+#    "inactivityReason": {"ABANDONO": "000", "DESCONHECIDO": "001", "TRANSFERENCIA": "010", "CONCLUIU_MAS_NAO_COLOU_GRAU": "011", "DESISTENCIA": "100"},
+#    "affirmativePolicy": {"A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"},
+#    "secondarySchoolType": {"PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"}
+#    "courseCode" : {"M":'00', "V":'01', "N":'10', "D":'11'}
 
-def getTurno(course):
-    saida = '00'
-    for c in json.load(open("data/coursesActives.json", encoding='utf-8')):
-        if c['code'] == course:
-            saida = binaryTurnos[c["name"][-1]]
-            break
-    
-    return saida
+
+
+# Carrega dicionario com codeCurso/turno
+dicTurnos = getTurno()
+def whatTurno(row):
+    return dicTurnos[str(row["courseCode"])]
 
 def load_large_json(file_path):
     return pd.read_json(file_path)
@@ -30,7 +31,7 @@ dataframe = load_large_json(file_path)
 # Obter dados dos estudantes
 #df = get_student_data()
 #Fazer lista de turnos
-dataframe["turno"] = dataframe.apply(lambda row: getTurno(row["courseCode"])  , axis=1)
+dataframe["turno"] = dataframe.apply(lambda row: getTurno()  , axis=1)
 
 # Mapeamento binário para valores categóricos
 binary_mappings = {
@@ -51,6 +52,9 @@ def adjust_secondary_school_type(row):
         else:
             return "PUBLICA"
     return row["secondarySchoolType"]
+def getInputOutput():
+    # Caminho para o arquivo JSON
+    file_path = r'data/students.json'
 
 dataframe["secondarySchoolType"] = dataframe.apply(adjust_secondary_school_type, axis=1)
 
@@ -75,11 +79,12 @@ dataframe = dataframe.astype(str)
 
 #Concatenar os resultados em uma string binária por linha
 binary_strings = dataframe.apply(lambda row: "".join(row.values), axis=1).to_list()
+print(binary_strings)
 
 # Visualizar o resultado
-print(binary_strings)
+
 #print(evaded_list)
-#print(dataframe)
+print(dataframe.columns)
 
 #Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
 #dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
