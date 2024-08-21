@@ -1,5 +1,6 @@
 #Count occurrences of certain parameters
 #Guilherme Fernandes, 2024
+'''
 import json
 
 estadoCivil = 0
@@ -26,3 +27,24 @@ print("Estado Civil: "+str(estadoCivil)+"/"+str(total))
 print("Tipo de Ensino: "+str(escola)+"/"+str(total))
 print("nascimento: "+str(nascimento)+"/"+str(total))
 print("nascimento: "+str(genero)+"/"+str(total))
+'''
+import numpy as np
+from python_artmap import ARTMAPFUZZY
+import bancoFalso as bf
+import sys
+
+sys.path.insert(1, r'C:\Users\m5253\VisualStudio\Icpreditor\processing')
+import processing
+#All Students Data
+students_in,students_out = processing.getInputOutput()
+#students_in = [list(item[0]) for item in students_in]
+#len_students = len(students_in)
+for i in range(len(students_in)):
+    #if(len(students_in[i])!=22):
+    print("{0}##{1}".format(i,len(students_in[i])))
+##Training Data
+input = np.array(students_in)
+#input = input.astype(int)
+output = np.array(students_out)
+
+#print(students_in)
