@@ -45,6 +45,32 @@ def adjust_secondary_school_type(row):
             return "PUBLICA"
     return row["secondarySchoolType"]
 
+def age_to_binary(age):
+    if age <= 17:
+        return '0000'
+    elif 18 <= age <= 20:
+        return '0001'
+    elif 20 <= age <= 22:
+        return '0010'
+    elif 22 <= age <= 24:
+        return '0011'
+    elif 24 <= age <= 26:
+        return '0100'
+    elif 26 <= age <= 28:
+        return '0101'
+    elif 28 <= age <= 30:
+        return '0110'
+    elif 30 <= age <= 33:
+        return '0111'
+    elif 33 <= age <= 36:
+        return '1000'
+    elif 36 <= age <= 45:
+        return '1001'
+    elif 46 <= age <= 60:
+        return '1010'
+    else:
+        return '1011'
+
 def getInputOutput():
     # Caminho para o arquivo JSON
     file_path = r'data/students.json'
@@ -59,7 +85,8 @@ def getInputOutput():
         dataframe[column] = dataframe[column].map(mapping)
 
     # Converter valores numéricos para binário
-    dataframe["age"] = dataframe["age"].apply(lambda x: format(int(x), '08b') if pd.notnull(x) else "0"*8)
+    dataframe["age"] = dataframe["age"].apply(age_to_binary)
+
     dataframe["courseCode"] = dataframe["courseCode"].apply(lambda x: format(int(x), '020b') if pd.notnull(x) else "0"*20)
 
     #dataframe["curriculumCode"] = dataframe["curriculumCode"].apply(lambda x: ''.join(format(ord(i), '08b') for i in x) if pd.notnull(x) else "0"*32)
@@ -68,9 +95,9 @@ def getInputOutput():
     )
 
     #Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
-    dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
+    dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '0010' and row['inactivityReason'] != '0010' else '0', axis=1)
     evaded_list = dataframe['evaded'].tolist()
-
+    
     # Colunas a serem mantidas
     columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "courseCode", "curriculumCode"]
 
