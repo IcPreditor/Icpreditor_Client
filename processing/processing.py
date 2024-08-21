@@ -1,23 +1,15 @@
+#Data processing, mapping and transformation on the bases we use
+#Eduardo Augusto, 2024
+
 import json
 import pandas as pd
 import numpy as np
 from dicTurno import getTurno
 
-#    "gender": {"MASCULINO": "00", "FEMININO": "01", "OUTRO": "10", "DESCONHECIDO": "11"},
-#    "nationality": {"BRASILEIRA": "0", "ESTRANGEIRA": "1"},
-#    "maritalStatus": {"SOLTEIRO": "000", "CASADO": "001", "SEPARADO": "010", "VIUVO": "011", "DIVORCIADO": "100", "DESCONHECIDO": "101"},
-#    "status": {"GRADUADO": "00", "ATIVO": "01", "INATIVO": "10"},
-#    "inactivityReason": {"ABANDONO": "000", "DESCONHECIDO": "001", "TRANSFERENCIA": "010", "CONCLUIU_MAS_NAO_COLOU_GRAU": "011", "DESISTENCIA": "100"},
-#    "affirmativePolicy": {"A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"},
-#    "secondarySchoolType": {"PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"}
-#    "courseCode" : {"M":'00', "V":'01', "N":'10', "D":'11'}
-
-
-
 # Carrega dicionario com codeCurso/turno
-dicTurnos = getTurno()
+dictionaryTurnos = getTurno()
 def whatTurno(row):
-    return dicTurnos[str(row["courseCode"])]
+    return dictionaryTurnos[str(row["courseCode"])]
 
 def load_large_json(file_path):
     return pd.read_json(file_path)
@@ -29,7 +21,7 @@ file_path = r'C:\Users\Usuário\Icpreditor\data\students.json'
 dataframe = load_large_json(file_path)
     
 # Obter dados dos estudantes
-#df = get_student_data()
+
 #Fazer lista de turnos
 dataframe["turno"] = dataframe.apply(lambda row: getTurno()  , axis=1)
 
@@ -40,8 +32,8 @@ binary_mappings = {
     "maritalStatus": {"SOLTEIRO": "000", "CASADO": "001", "SEPARADO": "010", "VIUVO": "011", "DIVORCIADO": "100", "DESCONHECIDO": "101"},
     "status": {"GRADUADO": "00", "ATIVO": "01", "INATIVO": "10"},
     "inactivityReason": {"ABANDONO": "000", "DESCONHECIDO": "001", "TRANSFERENCIA": "010", "CONCLUIU_MAS_NAO_COLOU_GRAU": "011", "DESISTENCIA": "100"},
-    "affirmativePolicy": {"A0": "000", "L1": "001", "L2": "010", "L5": "011", "L6": "100", "L9": "101", "L10": "110", "L13": "111", "L14": "1000", "BONUS": "1001"},
-    "secondarySchoolType": {"PRIVADA": "00", "PUBLICA": "01", "MAJORITARIAMENTE_PUBLICA": "10", "MAJORITARIAMENTE_PRIVADA": "11", "DESCONHECIDA": "100"}
+    "affirmativePolicy": {"A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"},
+    "secondarySchoolType": {"PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"}
 }
 
 #Ajuste do secondarySchoolType desconhecido
@@ -52,38 +44,75 @@ def adjust_secondary_school_type(row):
         else:
             return "PUBLICA"
     return row["secondarySchoolType"]
+
+def age_to_binary(age):
+    if age <= 17:
+        return '0000'
+    elif 18 <= age <= 20:
+        return '0001'
+    elif 20 <= age <= 22:
+        return '0010'
+    elif 22 <= age <= 24:
+        return '0011'
+    elif 24 <= age <= 26:
+        return '0100'
+    elif 26 <= age <= 28:
+        return '0101'
+    elif 28 <= age <= 30:
+        return '0110'
+    elif 30 <= age <= 33:
+        return '0111'
+    elif 33 <= age <= 36:
+        return '1000'
+    elif 36 <= age <= 45:
+        return '1001'
+    elif 46 <= age <= 60:
+        return '1010'
+    else:
+        return '1011'
+
 def getInputOutput():
     # Caminho para o arquivo JSON
     file_path = r'data/students.json'
+    
+    #Carregar os dados
+    dataframe = load_large_json(file_path)
 
-dataframe["secondarySchoolType"] = dataframe.apply(adjust_secondary_school_type, axis=1)
+    dataframe["secondarySchoolType"] = dataframe.apply(adjust_secondary_school_type, axis=1)
 
-# Converter valores categóricos para sua representação binária
-for col, mapping in binary_mappings.items():
-    dataframe[col] = dataframe[col].map(mapping)
-# Converter valores numéricos para binário
-dataframe["age"] = dataframe["age"].apply(lambda x: format(int(x), '08b') if pd.notnull(x) else "0"*8)
-dataframe["courseCode"] = dataframe["courseCode"].apply(lambda x: format(int(x), '020b') if pd.notnull(x) else "0"*20)
-#df["curriculumCode"] = df["curriculumCode"].apply(lambda x: ''.join(format(ord(i), '08b') for i in x) if pd.notnull(x) else "0"*32)
-dataframe["curriculumCode"] = dataframe["curriculumCode"].apply(
-    lambda x: ''.join(format(ord(i), '08b') for i in str(x)) if pd.notnull(x) else "0"*32
-)
+    # Converter valores categóricos para sua representação binária
+    for column, mapping in binary_mappings.items():
+        dataframe[column] = dataframe[column].map(mapping)
 
-#Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
-dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
-evaded_list = dataframe['evaded'].tolist()
-# Colunas a serem mantidas
-columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "courseCode", "curriculumCode"]
+    # Converter valores numéricos para binário
+    dataframe["age"] = dataframe["age"].apply(age_to_binary)
 
-# Remover todas as colunas que não estão em columns_to_keep
-dataframe = dataframe.drop(columns=[column for column in dataframe.columns if column not in columns_to_keep])
-# Substituir NaN por binário de 0s
-dataframe.fillna("0", inplace=True)
-dataframe = dataframe.astype(str)
+    dataframe["courseCode"] = dataframe["courseCode"].apply(lambda x: format(int(x), '020b') if pd.notnull(x) else "0"*20)
 
-#Concatenar os resultados em uma string binária por linha
-binary_strings = dataframe.apply(lambda row: "".join(row.values), axis=1).to_list()
-print(binary_strings)
+    #dataframe["curriculumCode"] = dataframe["curriculumCode"].apply(lambda x: ''.join(format(ord(i), '08b') for i in x) if pd.notnull(x) else "0"*32)
+    dataframe["curriculumCode"] = dataframe["curriculumCode"].apply(
+        lambda x: ''.join(format(ord(i), '08b') for i in str(x)) if pd.notnull(x) else "0"*32
+    )
 
-# Visualizar o resultado
-print(evaded_list)
+    #Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
+    dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '0010' and row['inactivityReason'] != '0010' else '0', axis=1)
+    evaded_list = dataframe['evaded'].tolist()
+    
+    # Colunas a serem mantidas
+    columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "courseCode", "curriculumCode"]
+
+    # Remover todas as colunas que não estão em columns_to_keep
+    dataframe = dataframe.drop(columns=[column for column in dataframe.columns if column not in columns_to_keep])
+
+    # Substituir NaN por binário de 0s
+    dataframe.fillna("0", inplace=True)
+    dataframe = dataframe.astype(str)
+
+    #Concatenar os resultados em uma string binária por linha
+    binary_strings = dataframe.apply(lambda row: "".join(row.values), axis=1).to_list()
+    print(binary_strings)
+
+    # Visualizar o resultado
+    print(evaded_list)
+
+getInputOutput()

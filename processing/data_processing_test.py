@@ -1,3 +1,6 @@
+#Fake data just to test the processing.py
+#Eduardo Augusto, 2024
+
 import pandas as pd
 
 def get_student_data():
