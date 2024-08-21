@@ -27,13 +27,13 @@ dataframe["turno"] = dataframe.apply(lambda row: getTurno()  , axis=1)
 
 # Mapeamento binário para valores categóricos
 binary_mappings = {
-    "gender": {"MASCULINO": "0000", "FEMININO": "0001", "OUTRO": "0010", "DESCONHECIDO": "0011"},
-    "nationality": {"BRASILEIRA": "0000", "ESTRANGEIRA": "0001"},
-    "maritalStatus": {"SOLTEIRO": "0000", "CASADO": "0001", "SEPARADO": "0010", "VIUVO": "0011", "DIVORCIADO": "0100", "DESCONHECIDO": "0101"},
-    "status": {"GRADUADO": "0000", "ATIVO": "0001", "INATIVO": "0010"},
-    "inactivityReason": {"ABANDONO": "0000", "DESCONHECIDO": "0001", "TRANSFERENCIA": "0010", "CONCLUIU_MAS_NAO_COLOU_GRAU": "0011", "DESISTENCIA": "0100"},
+    "gender": {"MASCULINO": "00", "FEMININO": "01", "OUTRO": "10", "DESCONHECIDO": "11"},
+    "nationality": {"BRASILEIRA": "00", "ESTRANGEIRA": "01"},
+    "maritalStatus": {"SOLTEIRO": "000", "CASADO": "001", "SEPARADO": "010", "VIUVO": "011", "DIVORCIADO": "100", "DESCONHECIDO": "101"},
+    "status": {"GRADUADO": "00", "ATIVO": "01", "INATIVO": "10"},
+    "inactivityReason": {"ABANDONO": "000", "DESCONHECIDO": "001", "TRANSFERENCIA": "010", "CONCLUIU_MAS_NAO_COLOU_GRAU": "011", "DESISTENCIA": "100"},
     "affirmativePolicy": {"A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"},
-    "secondarySchoolType": {"PRIVADA": "0000", "PUBLICA": "0001", "MAJORITARIAMENTE_PUBLICA": "0010", "MAJORITARIAMENTE_PRIVADA": "0011", "DESCONHECIDA": "0100"}
+    "secondarySchoolType": {"PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"}
 }
 
 #Ajuste do secondarySchoolType desconhecido
