@@ -5,6 +5,14 @@ import json
 import pandas as pd
 import numpy as np
 from dicTurno import getTurno
+# Mapeamento de dados do bando
+# age faixas <=15:001, <=18:010, <=21:011, <=25:100, <=30:101, <=40:110, >40:111
+# gender masculino:00 feminino:01 outro:10 descinhecido:11
+# maritalStatus solteiro:000 casado:001 separado:010 viuvo:011 divorciado:100 desconhecido:101
+# affirmativePolicy "A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"
+# secondarySchooltype "PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"
+# turno:     "M":'00', "V":'01', "N":'10', "D":'11' obs:extraido do curso 
+# nationality: brasileira:0 estrangeira:1
 
 # Carrega dicionario com codeCurso/turno
 dictionaryTurnos = getTurno()
@@ -35,6 +43,7 @@ def adjust_secondary_school_type(row):
         else:
             return "PUBLICA"
     return row["secondarySchoolType"]
+
 #Classificação de faixa etária
 def age_to_binary(age):
     if age <= 15:
