@@ -8,27 +8,18 @@ from dicTurno import getTurno
 
 # Carrega dicionario com codeCurso/turno
 dictionaryTurnos = getTurno()
+
 def whatTurno(row):
     return dictionaryTurnos[str(row["courseCode"])]
 
 def load_large_json(file_path):
     return pd.read_json(file_path)
 
-# Caminho para o arquivo JSON
-file_path = r'C:\Users\Usuário\Icpreditor\data\students.json'
-
-# Carregar os dados
-dataframe = load_large_json(file_path)
-    
-# Obter dados dos estudantes
-
-#Fazer lista de turnos
-dataframe["turno"] = dataframe.apply(lambda row: getTurno()  , axis=1)
 
 # Mapeamento binário para valores categóricos
 binary_mappings = {
     "gender": {"MASCULINO": "00", "FEMININO": "01", "OUTRO": "10", "DESCONHECIDO": "11"},
-    "nationality": {"BRASILEIRA": "00", "ESTRANGEIRA": "01"},
+    "nationality": {"BRASILEIRA": "0", "ESTRANGEIRA": "1"},
     "maritalStatus": {"SOLTEIRO": "000", "CASADO": "001", "SEPARADO": "010", "VIUVO": "011", "DIVORCIADO": "100", "DESCONHECIDO": "101"},
     "status": {"GRADUADO": "00", "ATIVO": "01", "INATIVO": "10"},
     "inactivityReason": {"ABANDONO": "000", "DESCONHECIDO": "001", "TRANSFERENCIA": "010", "CONCLUIU_MAS_NAO_COLOU_GRAU": "011", "DESISTENCIA": "100"},
@@ -44,32 +35,22 @@ def adjust_secondary_school_type(row):
         else:
             return "PUBLICA"
     return row["secondarySchoolType"]
-
+#Classificação de faixa etária
 def age_to_binary(age):
-    if age <= 17:
-        return '0000'
-    elif 18 <= age <= 20:
-        return '0001'
-    elif 20 <= age <= 22:
-        return '0010'
-    elif 22 <= age <= 24:
-        return '0011'
-    elif 24 <= age <= 26:
-        return '0100'
-    elif 26 <= age <= 28:
-        return '0101'
-    elif 28 <= age <= 30:
-        return '0110'
-    elif 30 <= age <= 33:
-        return '0111'
-    elif 33 <= age <= 36:
-        return '1000'
-    elif 36 <= age <= 45:
-        return '1001'
-    elif 46 <= age <= 60:
-        return '1010'
+    if age <= 15:
+        return '001'
+    elif age <= 18 :
+        return '010'
+    elif age <= 21:
+        return '011'
+    elif age <= 25:
+        return '100'
+    elif age <= 30:
+        return '101'
+    elif age <= 40:
+        return '110'
     else:
-        return '1011'
+        return '111'
 
 def getInputOutput():
     # Caminho para o arquivo JSON
@@ -77,6 +58,9 @@ def getInputOutput():
     
     #Carregar os dados
     dataframe = load_large_json(file_path)
+
+    #Fazer lista de turnos
+    dataframe["turno"] = dataframe.apply(lambda row: whatTurno(row) , axis=1)
 
     dataframe["secondarySchoolType"] = dataframe.apply(adjust_secondary_school_type, axis=1)
 
@@ -87,19 +71,12 @@ def getInputOutput():
     # Converter valores numéricos para binário
     dataframe["age"] = dataframe["age"].apply(age_to_binary)
 
-    dataframe["courseCode"] = dataframe["courseCode"].apply(lambda x: format(int(x), '020b') if pd.notnull(x) else "0"*20)
-
-    #dataframe["curriculumCode"] = dataframe["curriculumCode"].apply(lambda x: ''.join(format(ord(i), '08b') for i in x) if pd.notnull(x) else "0"*32)
-    dataframe["curriculumCode"] = dataframe["curriculumCode"].apply(
-        lambda x: ''.join(format(ord(i), '08b') for i in str(x)) if pd.notnull(x) else "0"*32
-    )
-
     #Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
-    dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '0010' and row['inactivityReason'] != '0010' else '0', axis=1)
+    dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
     evaded_list = dataframe['evaded'].tolist()
     
     # Colunas a serem mantidas
-    columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "courseCode", "curriculumCode"]
+    columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "turno"]
 
     # Remover todas as colunas que não estão em columns_to_keep
     dataframe = dataframe.drop(columns=[column for column in dataframe.columns if column not in columns_to_keep])
@@ -110,9 +87,7 @@ def getInputOutput():
 
     #Concatenar os resultados em uma string binária por linha
     binary_strings = dataframe.apply(lambda row: "".join(row.values), axis=1).to_list()
-    print(binary_strings)
-
-    # Visualizar o resultado
-    print(evaded_list)
+    #print(dataframe)
+    return(binary_strings,evaded_list)
 
 getInputOutput()
