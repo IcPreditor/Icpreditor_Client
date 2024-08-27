@@ -67,7 +67,8 @@ def getInputOutput():
     
     #Carregar os dados
     dataframe = load_large_json(file_path)
-
+    # Aleatoriza banco de dados
+    dataframe = dataframe.sample(frac=1,ignore_index=True,random_state=100)
     #Fazer lista de turnos
     dataframe["turno"] = dataframe.apply(lambda row: whatTurno(row) , axis=1)
 
@@ -83,7 +84,7 @@ def getInputOutput():
     #Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
     dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
     evaded_list = dataframe['evaded'].tolist()
-    
+    print(dataframe.value_counts("evaded"))
     # Colunas a serem mantidas
     columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "turno"]
 
@@ -93,7 +94,6 @@ def getInputOutput():
     # Substituir NaN por binário de 0s
     dataframe.fillna("0", inplace=True)
     dataframe = dataframe.astype(str)
-
     #Concatenar os resultados em uma string binária por linha
     binary_strings = dataframe.apply(lambda row: "".join(row.values), axis=1).to_list()
     #print(dataframe)
