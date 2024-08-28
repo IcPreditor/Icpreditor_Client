@@ -4,7 +4,7 @@
 
 import numpy as np
 from python_artmap import ARTMAPFUZZY
-import bancoFalso as bf
+import matplotlib.pyplot as plt
 import sys
 
 sys.path.insert(1, r'C:\Users\m5253\VisualStudio\Icpreditor\processing')
@@ -17,8 +17,6 @@ students_out = [list(aux2) for aux2 in students_out]
 #70% of sample to training 30% for testing
 size_sample = len(students_in)-1
 size_training = int(len(students_in)*0.70)
-print(size_sample)
-print(size_training)
 
 ##Training Data 70%
 input = np.array(students_in[0:size_training])
@@ -78,10 +76,10 @@ def treinamento_teste(ra,rb):
     error_not_evasion = sample_not_evasion-success_not_evasion
 
     #Variables, percentages
-    success_evation_per = (success_evasion/sample_evasion)*100
-    success_not_evation_per = (success_not_evasion/sample_not_evasion)*100
-    error_evasion_per = 100.0-success_evation_per
-    error_not_evasion_per = 100.0-success_not_evation_per
+    success_evasion_per = (success_evasion/sample_evasion)*100
+    success_not_evasion_per = (success_not_evasion/sample_not_evasion)*100
+    error_evasion_per = 100.0-success_evasion_per
+    error_not_evasion_per = 100.0-success_not_evasion_per
 
     #Variables, Total
     sample_total = sample_evasion + sample_not_evasion
@@ -100,7 +98,24 @@ def treinamento_teste(ra,rb):
         .format("Amostra",sample_evasion,100.0,sample_not_evasion,100.0,sample_total,100.0))
 
     print("{0:^8} | {1:^8} | {2:^8.1f} | {3:^8} | {4:^8.1f} | {5:^8} | {6:^8.1f} |".
-        format("Acerto",success_evasion,success_evation_per,success_not_evasion,success_not_evation_per,success_total,success_total_per))
+        format("Acerto",success_evasion,success_evasion_per,success_not_evasion,success_not_evasion_per,success_total,success_total_per))
 
     print("{0:^8} | {1:^8} | {2:^8.1f} | {3:^8} | {4:^8.1f} | {5:^8} | {6:^8.1f} |"
         .format("Erro",error_evasion,error_evasion_per,error_not_evasion,error_not_evasion_per,error_total,error_total_per))
+    success = [success_evasion_per,success_not_evasion_per]
+    error = [error_evasion_per,error_not_evasion_per]
+
+    y = ["Evasão","Não_Evasão"]
+    barWidth = 0.3
+    r1 = np.arange(len(success))
+    r2 = [aux + barWidth for aux in r1]
+
+    plt.figure(figsize=(10,5))
+    plt.bar(r1,success,color="red",width=barWidth,label='Success')
+    plt.bar(r2,error,color="blue",width=barWidth,label='Error')
+
+    plt.ylabel("Taxa (%)")
+    plt.xlabel("Evasão / Não Evasão")
+    plt.title("Taxas de Sucesso e Erro previsão de Evasão")
+    plt.legend()
+    plt.show()
