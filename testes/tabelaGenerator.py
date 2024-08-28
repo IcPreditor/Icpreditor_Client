@@ -11,12 +11,17 @@ sys.path.insert(1, r'C:\Users\m5253\VisualStudio\Icpreditor\processing')
 import processing
 #All Students Data
 students_in,students_out = processing.getInputOutput()
-
+print(len(students_in))
+print(len(students_out))
 students_in = [list(aux1) for aux1 in students_in]
-students_out = [list(aux2) for aux2 in students_out]
+students_out = [[aux2] for aux2 in students_out]
+
+
 #70% of sample to training 30% for testing
 size_sample = len(students_in)-1
 size_training = int(len(students_in)*0.70)
+print(size_sample)
+print(size_training)
 
 ##Training Data 70%
 input = np.array(students_in[0:size_training])
@@ -24,13 +29,16 @@ input = input.astype(int)
 
 output = np.array(students_out[0:size_training])
 output = output.astype(int)
-
+print(input)
+print(output)
 ##Testing Data 30%
 teste_in = np.array(students_in[size_training+1:size_sample])
 teste_in = teste_in.astype(int)
 
 teste_out = np.array(students_out[size_training+1:size_sample])
 teste_out = teste_out.astype(int)
+print(teste_in)
+print(teste_out)
 if output[0][0]==0:
     aux3 = [0,1]
 else:

@@ -111,7 +111,8 @@ def getInputOutput():
     columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "turno"]
 
     # Remover todas as colunas que não estão em columns_to_keep
-    dataframe = dataframe.drop(columns=[column for column in dataframe.columns if column not in columns_to_keep])
+    # Dataframe se torna dataframe_balanced
+    dataframe = dataframe_balanced.drop(columns=[column for column in dataframe.columns if column not in columns_to_keep])
 
     # Substituir NaN por binário de 0s
     dataframe.fillna("0", inplace=True)
