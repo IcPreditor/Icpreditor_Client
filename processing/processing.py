@@ -82,11 +82,7 @@ def getInputOutput():
     dataframe["age"] = dataframe["age"].apply(age_to_binary)
 
     #Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
-    dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
-    evaded_list = dataframe['evaded'].tolist()
-
-    #Transformando os valores de evadido de string para inteiros
-    dataframe['evaded'] = dataframe['evaded'].astype(int)
+    dataframe['evaded'] = dataframe.apply(lambda row: 1 if row['status'] == '10' and row['inactivityReason'] != '010' else 0, axis=1)
 
     # Verificar a proporção antes do balanceamento
     print(dataframe.value_counts("evaded"))
@@ -108,6 +104,8 @@ def getInputOutput():
 
     # Verificar a proporção após o balanceamento
     print(dataframe_balanced['evaded'].value_counts(normalize=True))
+
+    evaded_list = dataframe_balanced['evaded'].tolist()
 
     # Colunas a serem mantidas
     columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "turno"]
