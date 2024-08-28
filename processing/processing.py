@@ -84,7 +84,31 @@ def getInputOutput():
     #Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
     dataframe['evaded'] = dataframe.apply(lambda row: '1' if row['status'] == '10' and row['inactivityReason'] != '010' else '0', axis=1)
     evaded_list = dataframe['evaded'].tolist()
+
+    #Transformando os valores de evadido de string para inteiros
+    dataframe['evaded'] = dataframe['evaded'].astype(int)
+
+    # Verificar a proporção antes do balanceamento
     print(dataframe.value_counts("evaded"))
+
+    # A coluna 'evaded' contem 1 para evadidos e 0 para não evadidos
+    evadidos = dataframe[dataframe['evaded'] == 1]
+    nao_evadidos = dataframe[dataframe['evaded'] == 0]
+
+    # Realizando um undersampling, que seria diminuir da classe maior para igualar com a menor
+    if len(evadidos) < len(nao_evadidos):
+        nao_evadidos_balanced = nao_evadidos.sample(n=len(evadidos), random_state=42)
+        dataframe_balanced = pd.concat([evadidos, nao_evadidos_balanced])
+    else:
+        evadidos_balanced = evadidos.sample(n=len(nao_evadidos), random_state=42)
+        dataframe_balanced = pd.concat([evadidos_balanced, nao_evadidos])
+
+    # Embaralhar o dataframe
+    dataframe_balanced = dataframe_balanced.sample(frac=1, random_state=42).reset_index(drop=True)
+
+    # Verificar a proporção após o balanceamento
+    print(dataframe_balanced['evaded'].value_counts(normalize=True))
+
     # Colunas a serem mantidas
     columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "turno"]
 
