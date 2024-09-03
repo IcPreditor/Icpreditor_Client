@@ -6,19 +6,22 @@ import pandas as pd
 import numpy as np
 from dicTurno import getTurno
 # Mapeamento de dados do bando
-# age faixas <=15:001, <=18:010, <=21:011, <=25:100, <=30:101, <=40:110, >40:111
-# gender masculino:00 feminino:01 outro:10 descinhecido:11
-# maritalStatus solteiro:000 casado:001 separado:010 viuvo:011 divorciado:100 desconhecido:101
-# affirmativePolicy "A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"
-# secondarySchooltype "PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"
+# idade faixas <=15:001, <=18:010, <=21:011, <=25:100, <=30:101, <=40:110, >40:111
+# genero masculino:00 feminino:01 outro:10 descinhecido:11
+# estado_civil solteiro:000 casado:001 separado:010 viuvo:011 divorciado:100 desconhecido:101
+# politica_afirmativa "A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"
+# tipo_de_ensino_medio "PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"
 # turno:     "M":'00', "V":'01', "N":'10', "D":'11' obs:extraido do curso 
-# nationality: brasileira:0 estrangeira:1
+# nacionalidade: brasileira:0 estrangeira:1
+# cor: "BRANCA": "00", "PRETA": "01", "PARDA": "10", "INDÍGENA": "11", "NÃO DECLARADA": "100", "OUTRA": "101"
+# prac_renda_per_capita_ate: Faixa de renda, semelhante ao idade
+# prac_deficiencias: "-": "0", "Sim": "1"
 
 # Carrega dicionario com codeCurso/turno
 dictionaryTurnos = getTurno()
 
 def whatTurno(row):
-    return dictionaryTurnos[str(row["courseCode"])]
+    return dictionaryTurnos[str(row["codigo_do_curso"])]
 
 def load_large_json(file_path):
     return pd.read_json(file_path)
@@ -26,40 +29,57 @@ def load_large_json(file_path):
 
 # Mapeamento binário para valores categóricos
 binary_mappings = {
-    "gender": {"MASCULINO": "00", "FEMININO": "01", "OUTRO": "10", "DESCONHECIDO": "11"},
-    "nationality": {"BRASILEIRA": "0", "ESTRANGEIRA": "1"},
-    "maritalStatus": {"SOLTEIRO": "000", "CASADO": "001", "SEPARADO": "010", "VIUVO": "011", "DIVORCIADO": "100", "DESCONHECIDO": "101"},
-    "status": {"GRADUADO": "00", "ATIVO": "01", "INATIVO": "10"},
-    "inactivityReason": {"ABANDONO": "000", "DESCONHECIDO": "001", "TRANSFERENCIA": "010", "CONCLUIU_MAS_NAO_COLOU_GRAU": "011", "DESISTENCIA": "100"},
-    "affirmativePolicy": {"A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"},
-    "secondarySchoolType": {"PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"}
+    "genero": {"MASCULINO": "00", "FEMININO": "01", "OUTRO": "10", "DESCONHECIDO": "11"},
+    "nacionalidade": {"BRASILEIRA": "0", "ESTRANGEIRA": "1"},
+    "estado_civil": {"SOLTEIRO": "000", "CASADO": "001", "SEPARADO": "010", "VIUVO": "011", "DIVORCIADO": "100", "DESCONHECIDO": "101"},
+    "situacao": {"GRADUADO": "00", "ATIVO": "01", "INATIVO": "10"},
+    "motivo_de_evasao": {"CANCELAMENTO POR ABANDONO": "0000", "REGULAR": "0001", "NAO COMPARECEU CADASTRO": "0010", "CANCELADO REPROVOU TODAS POR FALTAS": "0011", "CANCELADO NOVO INGRESSO OUTRO CURSO": "0100", "CANCELADO NOVO INGRESSO MESMO CURSO": "1111"},
+    "politica_afirmativa": {"A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"},
+    "tipo_de_ensino_medio": {"PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"},
+    "cor": {"BRANCA": "001", "PRETA": "010", "PARDA": "10", "INDÍGENA": "011", "MESTIÇA": "100", "ORIENTAL": "101", "OUTRAS": "110"},
+    "prac_deficiente": {"-": "0", "Sim": "1"}
 }
 
-#Ajuste do secondarySchoolType desconhecido
+#Ajuste do tipo_de_ensino_medio desconhecido
 def adjust_secondary_school_type(row):
-    if row["secondarySchoolType"] == "DESCONHECIDA":
-        if row["affirmativePolicy"] == "A0":
+    if row["tipo_de_ensino_medio"] == "DESCONHECIDA":
+        if row["politica_afirmativa"] == "A0":
             return "PRIVADA"    
         else:
             return "PUBLICA"
-    return row["secondarySchoolType"]
+    return row["tipo_de_ensino_medio"]
 
 #Classificação de faixa etária
-def age_to_binary(age):
-    if age <= 15:
+def age_to_binary(idade):
+    if idade <= 15:
         return '001'
-    elif age <= 18 :
+    elif idade <= 18 :
         return '010'
-    elif age <= 21:
+    elif idade <= 21:
         return '011'
-    elif age <= 25:
+    elif idade <= 25:
         return '100'
-    elif age <= 30:
+    elif idade <= 30:
         return '101'
-    elif age <= 40:
+    elif idade <= 40:
         return '110'
     else:
         return '111'
+    
+#Classificação de renda per capita
+def income_to_binary(prac_renda_per_capita_ate):
+    if prac_renda_per_capita_ate <= 1.5:
+        return '001'
+    elif prac_renda_per_capita_ate <= 3.0 :
+        return '010'
+    elif prac_renda_per_capita_ate <= 5.0:
+        return '011'
+    elif prac_renda_per_capita_ate <= 7.0:
+        return '100'
+    elif prac_renda_per_capita_ate <= 10.0:
+        return '101'
+    else:
+        return '110'
 
 def getInputOutput():
     # Caminho para o arquivo JSON
@@ -72,17 +92,19 @@ def getInputOutput():
     #Fazer lista de turnos
     dataframe["turno"] = dataframe.apply(lambda row: whatTurno(row) , axis=1)
 
-    dataframe["secondarySchoolType"] = dataframe.apply(adjust_secondary_school_type, axis=1)
+    dataframe["tipo_de_ensino_medio"] = dataframe.apply(adjust_secondary_school_type, axis=1)
 
     # Converter valores categóricos para sua representação binária
     for column, mapping in binary_mappings.items():
         dataframe[column] = dataframe[column].map(mapping)
 
     # Converter valores numéricos para binário
-    dataframe["age"] = dataframe["age"].apply(age_to_binary)
+    dataframe["idade"] = dataframe["idade"].apply(age_to_binary)
+
+    dataframe["prac_renda_per_capita_ate"] = dataframe["prac_renda_per_capita_ate"].apply(income_to_binary)
 
     #Fazer uma lista dos estudantes que evadiram com base na sua razao de inatividade
-    dataframe['evaded'] = dataframe.apply(lambda row: 1 if row['status'] == '10' and row['inactivityReason'] != '010' else 0, axis=1)
+    dataframe['evaded'] = dataframe.apply(lambda row: 1 if row['situacao'] == '10' and row['motivo_de_evasao'] != '010' else 0, axis=1)
 
     # Verificar a proporção antes do balanceamento
     print(dataframe.value_counts("evaded"))
@@ -108,15 +130,16 @@ def getInputOutput():
     evaded_list = dataframe_balanced['evaded'].tolist()
 
     # Colunas a serem mantidas
-    columns_to_keep = ["age", "gender", "nationality", "maritalStatus", "affirmativePolicy", "secondarySchoolType", "turno"]
+    columns_to_keep = ["idade", "genero", "nacionalidade", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno", "cor", "prac_renda_per_capita_ate", "prac_deficiente"]
 
     # Remover todas as colunas que não estão em columns_to_keep
     # Dataframe se torna dataframe_balanced
     dataframe = dataframe_balanced.drop(columns=[column for column in dataframe.columns if column not in columns_to_keep])
 
+    dataframe = dataframe.astype(str)
+
     # Substituir NaN por binário de 0s
     dataframe.fillna("0", inplace=True)
-    dataframe = dataframe.astype(str)
     #Concatenar os resultados em uma string binária por linha
     binary_strings = dataframe.apply(lambda row: "".join(row.values), axis=1).to_list()
     #print(dataframe)
