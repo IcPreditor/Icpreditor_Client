@@ -4,24 +4,20 @@
 import json
 import pandas as pd
 import numpy as np
-from dicTurno import getTurno
 # Mapeamento de dados do bando
 # idade faixas <=15:001, <=18:010, <=21:011, <=25:100, <=30:101, <=40:110, >40:111
 # genero masculino:00 feminino:01 outro:10 descinhecido:11
 # estado_civil solteiro:000 casado:001 separado:010 viuvo:011 divorciado:100 desconhecido:101
 # politica_afirmativa "A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"
 # tipo_de_ensino_medio "PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"
-# turno:     "M":'00', "V":'01', "N":'10', "D":'11' obs:extraido do curso 
+# turno: "Integral":'11',"Matutino":'01',"Noturno":"10"
 # nacionalidade: brasileira:0 estrangeira:1
-# cor: "BRANCA": "00", "PRETA": "01", "PARDA": "10", "INDÍGENA": "11", "NÃO DECLARADA": "100", "OUTRA": "101"
+# cor: "BRANCA": "001", "PRETA": "010", "PARDA": "10", "INDÍGENA": "011", "MESTIÇA": "100", "ORIENTAL": "101", "OUTRAS": "110"
 # prac_renda_per_capita_ate: Faixa de renda, semelhante ao idade
 # prac_deficiencias: "-": "0", "Sim": "1"
 
 # Carrega dicionario com codeCurso/turno
-dictionaryTurnos = getTurno()
 
-def whatTurno(row):
-    return dictionaryTurnos[str(row["codigo_do_curso"])]
 
 def load_large_json(file_path):
     return pd.read_json(file_path)
@@ -37,7 +33,8 @@ binary_mappings = {
     "politica_afirmativa": {"A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"},
     "tipo_de_ensino_medio": {"PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"},
     "cor": {"BRANCA": "001", "PRETA": "010", "PARDA": "10", "INDÍGENA": "011", "MESTIÇA": "100", "ORIENTAL": "101", "OUTRAS": "110"},
-    "prac_deficiente": {"-": "0", "Sim": "1"}
+    "prac_deficiente": {"-": "0", "Sim": "1"},
+    "turno_do_curso":{"Integral":'11',"Matutino":'01',"Noturno":"10"}
 }
 
 #Ajuste do tipo_de_ensino_medio desconhecido
@@ -90,8 +87,6 @@ def getInputOutput():
     # Aleatoriza banco de dados
     dataframe = dataframe.sample(frac=1,ignore_index=True,random_state=100)
     #Fazer lista de turnos
-    dataframe["turno"] = dataframe.apply(lambda row: whatTurno(row) , axis=1)
-
     dataframe["tipo_de_ensino_medio"] = dataframe.apply(adjust_secondary_school_type, axis=1)
 
     # Converter valores categóricos para sua representação binária
