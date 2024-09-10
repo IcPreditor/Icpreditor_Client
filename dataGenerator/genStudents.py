@@ -41,11 +41,9 @@ def saveCoursesActives(token):
 #student by course // 2017.1-2023.2
 def saveStudents(token):
     headers = {'content-type':'application/json',"authentication-token":token}
-    request = req.get(url_eureca+"/estudantes?periodo-de-ingresso-de=2018.1&periodo-de-ingresso-ate=2023.2&campus=1",headers=headers)
+    request = req.get(url_eureca+"/estudantes?periodo-de-ingresso-de=2018.1&periodo-de-ingresso-ate=2023.2&situacao-do-estudante=INATIVOS&campus=1",headers=headers)
     with open("data/students.json","w") as students_file:
         json.dump(request.json(),students_file)
-
-#For test
 
 #Opens file with credentials (credentials.json)
 credentials = open("data/credentials.json","r")
