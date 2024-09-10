@@ -8,24 +8,25 @@ import requests as req
 import pandas as pd
 import json
 
-
-url_token = 'https://pre.ufcg.edu.br:8443/as_scao'
+url_token = 'https://eureca.sti.ufcg.edu.br/as'
+#url_token = 'https://pre.ufcg.edu.br:8443/as_scao'
 #url_eureca = 'https://eureca.sti.ufcg.edu.br/das'
 url_eureca= 'https://eureca.sti.ufcg.edu.br/das/v2'
 #request token
 def genToken(data):
-    request = req.post((url_token+"/as/tokens"), json=data )
+    request = req.post((url_token+"/tokens"), json=data )
     #token = r.json()['token']
     #saves token in token.json
     with open("data/token.json","w") as token_file:
         json.dump(request.json(),token_file)
     #retorna token
+    print(request.json())
     return request.json()["token"]
 
 #request profile (using token)
 def getProfile(token):
     headers = {'content-type':'application/json',"authentication-token":token}
-    request = req.get((url_token+"/as/profile"),headers=headers)
+    request = req.get((url_token+"/profile"),headers=headers)
     return request.json()
 
 #request Courses Actives (using token)
@@ -40,7 +41,7 @@ def saveCoursesActives(token):
 #student by course // 2017.1-2023.2
 def saveStudents(token):
     headers = {'content-type':'application/json',"authentication-token":token}
-    request = req.get(url_eureca+"/estudantes?periodo-de-ingresso-de=2023.1&periodo-de-ingresso-ate=2023.2&campus=1",headers=headers)
+    request = req.get(url_eureca+"/estudantes?periodo-de-ingresso-de=2018.1&periodo-de-ingresso-ate=2023.2&campus=1",headers=headers)
     with open("data/students.json","w") as students_file:
         json.dump(request.json(),students_file)
 
