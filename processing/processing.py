@@ -152,6 +152,19 @@ def getInputOutput():
 
     dataframe["prac_renda_per_capita_ate"] = dataframe["prac_renda_per_capita_ate"].apply(income_to_binary)
 
+    # Definindo as categorias a serem removidas
+    categorias_para_remover = [
+        "000100",
+        "001010",
+        "001101",
+        "010000",
+        "010011",
+        "011010"
+    ]
+
+    # Removendo os registros do DataFrame
+    dataframe = dataframe[~dataframe['motivo_de_evasao'].isin(categorias_para_remover)]
+
     # Fazer uma lista dos estudantes que evadiram com base na sua razão de inatividade
     dataframe['evaded'] = dataframe.apply(lambda row: 0 if row['motivo_de_evasao'] in ['000001', '010101'] else 1, axis=1)
 
@@ -160,7 +173,6 @@ def getInputOutput():
 
     # Criar a lista de evaded
     evaded_list = dataframe['evaded'].tolist()
-    print(evaded_list)
 
     # Colunas a serem mantidas
     columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente"]
