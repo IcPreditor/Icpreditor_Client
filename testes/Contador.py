@@ -40,7 +40,7 @@ students_in,students_out = processing.getInputOutput()
 #students_in = [list(item[0]) for item in students_in]
 #len_students = len(students_in)
 for i in range(len(students_in)):
-    if(len(students_in[i])!=19):
+    if(students_in[i].find('n')!=-1):
         print("{0}##{1}".format(i,len(students_in[i])))
 ##Training Data
 input = np.array(students_in)
