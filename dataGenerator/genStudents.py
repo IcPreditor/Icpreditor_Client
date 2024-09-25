@@ -25,13 +25,13 @@ def genToken(data):
 
 #request profile (using token)
 def getProfile(token):
-    headers = {'content-type':'application/json',"authentication-token":token}
+    headers = {'content-type':'application/json',"token-de-autenticacao":token}
     request = req.get((url_token+"/profile"),headers=headers)
     return request.json()
 
 #request Courses Actives (using token)
 def saveCoursesActives(token):
-    headers = {'content-type':'application/json',"authentication-token":token}
+    headers = {'content-type':'application/json',"token-de-autenticacao":token}
     request = req.get(url_eureca+"/cursos?status-enum=ATIVOS&campus=1",headers=headers)
     #save coursesActives
     with open("data/coursesActives.json","w") as courses_file:
@@ -39,9 +39,9 @@ def saveCoursesActives(token):
     #return r.content
 
 #student by course // 2017.1-2023.2
-def saveStudents(token):
-    headers = {'content-type':'application/json',"authentication-token":token}
-    request = req.get(url_eureca+"/estudantes?periodo-de-evasao-de=2018.1&periodo-de-evasao-ate=2023.2&situacao-do-estudante=INATIVOS&campus=1",headers=headers)
+def saveStudents(token,inicio="2018.1",fim="2023.2"):
+    headers = {'content-type':'application/json',"token-de-autenticacao":token}
+    request = req.get(url_eureca+"/estudantes?periodo-de-evasao-de="+inicio+"&periodo-de-evasao-ate="+fim+"&situacao-do-estudante=INATIVOS&campus=1",headers=headers)
     with open("data/students.json","w") as students_file:
         json.dump(request.json(),students_file)
 
