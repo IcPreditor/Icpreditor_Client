@@ -176,7 +176,7 @@ def getInputOutput():
 
     # Colunas a serem mantidas
     columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente"]
-
+    dataframeCopia = dataframe
     # Remover todas as colunas que não estão em columns_to_keep
     # Dataframe se torna dataframe_balanced
     dataframe = dataframe.drop(columns=[column for column in dataframe.columns if column not in columns_to_keep])
@@ -188,6 +188,6 @@ def getInputOutput():
     #Concatenar os resultados em uma string binária por linha
     binary_strings = dataframe.apply(lambda row: "".join(row.values), axis=1).to_list()
     #print(binary_strings)
-    return(binary_strings,evaded_list)
+    return(binary_strings,evaded_list,dataframeCopia)
 
 getInputOutput()

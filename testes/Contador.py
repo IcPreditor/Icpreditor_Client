@@ -1,50 +1,24 @@
 #Count occurrences of certain parameters
 #Guilherme Fernandes, 2024
-'''
-import json
 
-estadoCivil = 0
-nascimento = 0
-escola = 0
-genero = 0
-affirmativePolicy = 0
-
-total = 0
-
-for aluno in json.load(open("data/students.json")):
-    total += 1
-    if aluno["maritalStatus"]=="DESCONHECIDO":
-        estadoCivil += 1
-    if aluno["placeOfBirth"] == None:
-        nascimento += 1
-    if aluno["secondarySchoolType"] == "DESCONHECIDA":
-        escola += 1
-    if aluno["gender"] != "FEMININO" and aluno["gender"] != "MASCULINO":
-        genero += 1
-          
-print("Contagem Desconhecidos: ")
-print("Estado Civil: "+str(estadoCivil)+"/"+str(total))
-print("Tipo de Ensino: "+str(escola)+"/"+str(total))
-print("nascimento: "+str(nascimento)+"/"+str(total))
-print("nascimento: "+str(genero)+"/"+str(total))
-'''
 import numpy as np
-from python_artmap import ARTMAPFUZZY
-import bancoFalso as bf
+import pandas as pd
 import sys
-
 sys.path.insert(1, r'C:\Users\m5253\VisualStudio\Icpreditor\processing')
 import processing
-#All Students Data
-students_in,students_out = processing.getInputOutput()
-#students_in = [list(item[0]) for item in students_in]
-#len_students = len(students_in)
-for i in range(len(students_in)):
-    if(students_in[i].find('n')!=-1):
-        print("{0}##{1}".format(i,len(students_in[i])))
-##Training Data
-input = np.array(students_in)
-#input = input.astype(int)
-output = np.array(students_out)
+def load_large_json(file_path):
+    return pd.read_json(file_path)
+file_path = r'data/students.json'
+dataframe = load_large_json(file_path)
+colunas = ['nome_do_curso','turno_do_curso','nome_do_setor','estado_civil', 'genero', 'idade',
+        'situacao', 'motivo_de_evasao', 'periodo_de_evasao', 'periodo_de_ingresso', 'naturalidade',
+        'cor', 'tipo_de_ensino_medio','politica_afirmativa', 'prac_renda_per_capita_ate',
+        'taxa_de_sucesso']
+#print(dataframe.columns)
 
-#print(students_in)
+for c in (colunas):
+    print(c)
+    print(dataframe.value_counts(c))
+#print(dataframe.value_counts())
+
+
