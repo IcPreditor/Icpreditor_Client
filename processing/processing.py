@@ -135,7 +135,7 @@ def getInputOutput():
     dataframe["tipo_de_ensino_medio"] = dataframe.apply(adjust_secondary_school_type, axis=1)
 
     #Transformando todos os inputs em maiúsculo para padronizar o mapeamento
-    dataframe = dataframe.applymap(lambda x: x.upper() if isinstance(x, str) else x)
+    dataframe = dataframe.map(lambda x: x.upper() if isinstance(x, str) else x)
 
     #Transformando todas as idades em inteiro antes de realizar o mapeamento
     dataframe['idade'] = dataframe['idade'].astype(int)
