@@ -37,6 +37,16 @@ def load_large_json(file_path):
     return pd.read_json(file_path)
 
 
+# Mapeamento Setor
+setor_mappint = {
+    "CH - CENTRO DE HUMANIDADES": "001",
+    "CCT - CENTRO DE CIÊNCIAS E TECNOLOGIA":"010",
+    "CEEI - CENTRO DE ENGENHARIA ELÉTRICA E INFORMÁTICA":"011",
+    "CTRN - CENTRO DE TECNOLOGIA E RECURSOS NATURAIS":"100",
+    "CCBS - CENTRO DE CIÊNCIAS BIOLÓGICAS E DA SAÚDE":"101",
+    "CENTRO PARFOR":"110"
+}
+
 # Mapeamento binário para valores categóricos
 binary_mappings = {
     "genero": {"MASCULINO": "0", "FEMININO": "1"},
@@ -90,7 +100,30 @@ def adjust_secondary_school_type(row):
         else:
             return "PUBLICA"
     return row["tipo_de_ensino_medio"]
-
+# Classificação de taxa de sucesso
+def taxa_binary(taxa_sucesso):
+    if taxa_sucesso <= 0.2:
+        return '001'
+    elif taxa_sucesso <=0.4:
+        return '010'
+    elif taxa_sucesso <=0.6:
+        return '011'
+    elif taxa_sucesso <=0.8:
+        return '100'
+    elif taxa_sucesso <=1.0:
+        return '101'
+# classificação de cra
+def cra_binary(cra):
+    if cra <= 5:
+        return '001'
+    elif cra <=7:
+        return '010'
+    elif cra <=7:
+        return '011'
+    elif cra <=8:
+        return '100'
+    elif cra <=10:
+        return '101'
 #Classificação de faixa etária
 def age_to_binary(idade):
     if idade <= 15:
@@ -135,10 +168,17 @@ def getInputOutput():
     dataframe["tipo_de_ensino_medio"] = dataframe.apply(adjust_secondary_school_type, axis=1)
 
     #Transformando todos os inputs em maiúsculo para padronizar o mapeamento
-    dataframe = dataframe.applymap(lambda x: x.upper() if isinstance(x, str) else x)
+    dataframe = dataframe.map(lambda x: x.upper() if isinstance(x, str) else x)
 
     #Transformando todas as idades em inteiro antes de realizar o mapeamento
     dataframe['idade'] = dataframe['idade'].astype(int)
+    #Transformando todas as taxas de sucesso em float antes de realizar mapeamento
+    dataframe['taxa_de_sucesso'] = dataframe['taxa_de_sucesso'].astype(float)
+    #Transformando todas as craditos_do_cra em inteiro antes de realizar mapeamento
+    dataframe['creditos_do_cra'] = dataframe['creditos_do_cra'].astype(int)
+    #Transformando todas as taxas de sucesso em float antes de realizar mapeamento
+    dataframe['notas_acumuladas'] = dataframe['notas_acumuladas'].astype(float)
+
 
     # Converter valores categóricos para sua representação binária
     for column, mapping in binary_mappings.items():
@@ -146,11 +186,18 @@ def getInputOutput():
 
     # Aplicar o mapeamento binário para a coluna 'motivo_de_evasao'
     dataframe['motivo_de_evasao'] = dataframe['motivo_de_evasao'].map(motivo_de_evasao_mapping)
-
+    # Aplicar o mapeamento binário para a coluna 'nome_do_setor'
+    dataframe['nome_do_setor'] = dataframe['nome_do_setor'].map(setor_mappint)
     # Converter valores numéricos para binário
+    # idade
     dataframe["idade"] = dataframe["idade"].apply(age_to_binary)
-
+    # taxa de sucesso
+    dataframe['taxa_de_sucesso'] = dataframe['taxa_de_sucesso'].apply(taxa_binary)
+    # renda
     dataframe["prac_renda_per_capita_ate"] = dataframe["prac_renda_per_capita_ate"].apply(income_to_binary)
+
+    # calcular cra com notas_acumuladas e creditos_do_cra
+    dataframe['cra'] = (dataframe["notas_acumuladas"]/dataframe["creditos_do_cra"]).apply(cra_binary)
 
     # Definindo as categorias a serem removidas
     categorias_para_remover = [
@@ -175,12 +222,12 @@ def getInputOutput():
     evaded_list = dataframe['evaded'].tolist()
 
     # Colunas a serem mantidas
-    columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente"]
+    columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente", "nome_do_setor",'taxa_de_sucesso','cra']
     dataframeCopia = dataframe
     # Remover todas as colunas que não estão em columns_to_keep
     # Dataframe se torna dataframe_balanced
     dataframe = dataframe.drop(columns=[column for column in dataframe.columns if column not in columns_to_keep])
-
+    print(dataframe)
     dataframe = dataframe.astype(str)
 
     # Substituir NaN por binário de 0s
