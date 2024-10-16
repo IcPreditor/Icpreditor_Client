@@ -7,7 +7,7 @@ from python_artmap import ARTMAPFUZZY
 import matplotlib.pyplot as plt
 import sys
 
-sys.path.insert(1, r'C:\Users\m5253\VisualStudio\Icpreditor\processing')
+sys.path.insert(1, r'processing')
 import processing
 #All Students Data
 students_in,students_out,dataFrame = processing.getInputOutput()
