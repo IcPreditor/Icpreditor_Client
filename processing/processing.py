@@ -124,6 +124,8 @@ def cra_binary(cra):
         return '100'
     elif cra <=10:
         return '101'
+    else:
+        return '000'
 #Classificação de faixa etária
 def age_to_binary(idade):
     if idade <= 15:
@@ -229,7 +231,6 @@ def getInputOutput():
     dataframe = dataframe.drop(columns=[column for column in dataframe.columns if column not in columns_to_keep])
     print(dataframe)
     dataframe = dataframe.astype(str)
-
     # Substituir NaN por binário de 0s
     dataframe.fillna("0", inplace=True)
     #Concatenar os resultados em uma string binária por linha
