@@ -43,10 +43,19 @@ else:
 
 #rhoARTa AND rhoARTb
 def treinamento_teste(ra,rb):
-        
+    #rhoARTa: float = 0.5,
+    #rhoARTb: float = 0.5,
+    #alphaARTa: float = 0.001,
+    #betaARTa: int = 1,
+    #alphaARTb: float = 0.001,
+    #betaARTb: int = 1,
+    #maxValueArta: int = 1,
+    #maxValueArtb: int = 1,
+    #epsilon: float = 0.001
     print("##Iniciando Treinamento##")
     print("RhoA: " + str(ra))
     print("RhoB: " + str(rb))
+    
     ArtMap = ARTMAPFUZZY(input, output, rhoARTa=ra, rhoARTb=rb)
     ArtMap.train()
     print("##Treinamento Finalizado##")
