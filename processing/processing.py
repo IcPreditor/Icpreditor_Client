@@ -229,13 +229,12 @@ def getInputOutput():
     # Remover todas as colunas que não estão em columns_to_keep
     # Dataframe se torna dataframe_balanced
     dataframe = dataframe.drop(columns=[column for column in dataframe.columns if column not in columns_to_keep])
-    print(dataframe)
     dataframe = dataframe.astype(str)
     # Substituir NaN por binário de 0s
     dataframe.fillna("0", inplace=True)
     #Concatenar os resultados em uma string binária por linha
     binary_strings = dataframe.apply(lambda row: "".join(row.values), axis=1).to_list()
     #print(binary_strings)
-    return(binary_strings,evaded_list,dataframeCopia)
+    return(binary_strings,evaded_list,dataframeCopia,columns_to_keep)
 
 getInputOutput()
