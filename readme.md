@@ -1,32 +1,37 @@
 #ReadMe Provisório
 
-
 data/credentials.json
 
 {"credentials":{"username":"matricula","password":"senhaSCAOS#"}}
 
-# students
+python3 genStudents.py
 
+python3 testeRho.py
 
 
 ## Dados importantes:
 ### 1977.1 - 2023.2
 
-age int 
-
-gender enum MASCULINO FEMININO OUTRO DESCONHECIDO
-maritalStatus enum SOLTEIRO CASADO SEPARADO VIUVO DIVORCIADO DESCONHECIDO
-
-status enum GRADUADO ATIVO INATIVO
-inactivityReason enum ABANDONO DESCONHECIDO TRANSFERENCIA CONCLUIU_MAS_NAO_COLOU_GRAU/EXPULSAO
-
-affirmativePolicy enum A0 L1 L2 L5 L6 L9 L9 L10 L13 L14 BONUS
-secondarySchoolType enum PRIVADA PUBLICA MAJORITARIAMENTE_PUBLICA MAJORITARIAMENTE_PRIVADA DESCONHECIDA
-
-secondarySchoolType string (year)
-courseCode string 
-curriculumCode string (x/2017)
 
 ## Artmap Fuzzy
 
 Utilizando biblioteca 'python_artmap' disponibilizada no Git de David Vinicios https://github.com/DavidVinicius/python_artmap
+
+## Organização
+'data/' - .json que são lidos pelos scripts
+
+'dataGenerator/genStudents.py' -> atualiza students.json (apartir de credentials.json)
+
+'dataGenerator/analisarTaxas.py' -> para debug
+
+'dataGenerator/Contador.py' -> contador para entradas discrepantes (debug)
+
+'dataGenerator/corRacaValidation.py' -> verificar discrepancia de corPrac e corScao
+
+'processing/processing.py' -> mapeia variváveis de students para binários
+
+'processing/data_processing_test.py' -> teste de processing (artifact)
+
+'teste/tabelaGenerator.py' -> apartir de parametros (rhoA e rhoB) roda o treino e teste (70% e 30%)
+
+'teste/testeRho.py' -> roda tabelaGenerator varias vezes usando rhoA e rhoB com valores de 0.1 a 1

@@ -10,7 +10,7 @@ import sys
 sys.path.insert(1, r'processing')
 import processing
 #All Students Data
-students_in,students_out,dataFrame = processing.getInputOutput()
+students_in,students_out,dataFrame,variaveis = processing.getInputOutput()
 #print(len(students_in))
 #print(len(students_out))
 students_in = [list(aux1) for aux1 in students_in]
@@ -55,7 +55,9 @@ def treinamento_teste(ra,rb):
     print("##Iniciando Treinamento##")
     print("RhoA: " + str(ra))
     print("RhoB: " + str(rb))
-    
+    print("## Variáveis")
+    for v in variaveis:
+        print(f" - {v}")
     ArtMap = ARTMAPFUZZY(input, output, rhoARTa=ra, rhoARTb=rb)
     ArtMap.train()
     print("##Treinamento Finalizado##")
