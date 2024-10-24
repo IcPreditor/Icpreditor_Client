@@ -21,7 +21,6 @@ from sklearn.metrics import classification_report
 students_in,students_out,dataframe,feature_cols = processing.getInputOutput()
 X = dataframe[feature_cols]
 Y = dataframe['evaded']
-
 # Dividir o conjunto de dados em conjuntos de treinamento e teste
 # test_size=0.3 significa que 30% dos dados serão usados para teste e 70% para treinamento
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=16)
@@ -29,7 +28,13 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_
 logreg = LogisticRegression(random_state=16,max_iter=100000)
 logreg.fit(X_train, Y_train)
 
+print("Coeficiente de Regressão das Variáveis:")
+coeficientes = logreg.coef_[0]
+for i in range(len(feature_cols)):
+    print(f"{feature_cols[i]} - [{coeficientes[i]}]")
+
 Y_pred = logreg.predict(X_test)
+
 
 # Exibir previsões feitas pelo modelo
 # Matriz de confusão 
