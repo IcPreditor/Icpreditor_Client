@@ -4,6 +4,7 @@
 
 import numpy as np
 from python_artmap import ARTMAPFUZZY
+from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import sys
 
@@ -23,7 +24,16 @@ index_training = int(len(students_in)*0.70)
 print("sample : "+str(index_sample))
 print("training : "+str(index_training))
 print("testing : "+str(index_sample-index_training))
-
+input, teste_in, output, teste_out = train_test_split(students_in, students_out, test_size=0.3, random_state=0)
+input = np.array(input)
+output = np.array(output)
+teste_in = np.array(teste_in)
+teste_out = np.array(teste_out)
+input = input.astype(int)
+output = output.astype(int)
+teste_in = teste_in.astype(int)
+teste_out = teste_out.astype(int)
+'''
 ##Training Data 70%
 input = np.array(students_in[0:index_training])
 input = input.astype(int)
@@ -36,6 +46,7 @@ teste_in = teste_in.astype(int)
 
 teste_out = np.array(students_out[index_training+1:index_sample])
 teste_out = teste_out.astype(int)
+'''
 if output[0][0]==0:
     aux3 = [0,1]
 else:

@@ -23,7 +23,7 @@ X = dataframe[feature_cols]
 Y = dataframe['evaded']
 # Dividir o conjunto de dados em conjuntos de treinamento e teste
 # test_size=0.3 significa que 30% dos dados serão usados para teste e 70% para treinamento
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=16)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
 
 logreg = LogisticRegression(random_state=16,max_iter=100000)
 logreg.fit(X_train, Y_train)
