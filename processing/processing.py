@@ -158,7 +158,7 @@ def income_to_binary(prac_renda_per_capita_ate):
     else:
         return '110'
 
-def getInputOutput():
+def getInputOutput(undersampling=True,regressao=False):
     # Caminho para o arquivo JSON
     file_path = r'data/students.json'
     
@@ -220,11 +220,8 @@ def getInputOutput():
     # Verificar a proporção de evadidos
     print(dataframe.value_counts("evaded"))
 
-    # Criar a lista de evaded
-    evaded_list = dataframe['evaded'].tolist()
-
     # Colunas a serem mantidas
-    columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente", "nome_do_setor",'taxa_de_sucesso','cra']
+    columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente", "nome_do_setor",'taxa_de_sucesso','cra','evaded']
     dataframeCopia = dataframe
     # Remover todas as colunas que não estão em columns_to_keep
     # Dataframe se torna dataframe_balanced
@@ -232,9 +229,61 @@ def getInputOutput():
     dataframe = dataframe.astype(str)
     # Substituir NaN por binário de 0s
     dataframe.fillna("0", inplace=True)
-    #Concatenar os resultados em uma string binária por linha
-    binary_strings = dataframe.apply(lambda row: "".join(row.values), axis=1).to_list()
-    #print(binary_strings)
-    return(binary_strings,evaded_list,dataframeCopia,columns_to_keep)
 
-getInputOutput()
+    
+
+    #Aplicar Undersampling se requisitado
+    if(undersampling):
+        contagem = dataframe.value_counts("evaded")
+        if contagem["0"]>contagem["1"]:
+            classMin = "1"
+            classMax = "0"
+        else:
+            classMin = "0"
+            classMax = "1"
+        minimo = contagem[classMin]
+        dfMin = dataframe[dataframe["evaded"]==classMin]
+        dfMax = dataframe[dataframe["evaded"]==classMax].sample(n=minimo,random_state=0)
+    
+        #Dividir Teste Treino
+        dfTreinoMin = dfMin.sample(frac=0.7, random_state=0)  # 70% para treino
+        dfTesteMin = dfMin.drop(dfTreinoMin.index)  # O restante para teste (30%)
+
+        dfTreinoMax = dfMax.sample(frac=0.7, random_state=0)  # 70% para treino
+        dfTesteMax = dfMax.drop(dfTreinoMax.index)  # O restante para teste (30%)
+
+        dfTreino = pd.concat([dfTreinoMin,dfTreinoMax])
+        dfTeste = pd.concat([dfTesteMin,dfTesteMax])
+
+        dfTreino = dfTreino.sample(frac=1,random_state=0,ignore_index=True)
+        dfTeste = dfTeste.sample(frac=1,random_state=0,ignore_index=True)
+    else:
+        # Não aplicar undersampling
+        dfTreino = dataframe.sample(frac=0.7, random_state=0)  # 70% para treino
+        dfTeste = dataframe.drop(dfTreino.index)
+        
+    
+
+    
+    Y_treino = dfTreino['evaded']
+    X_treino = dfTreino.drop(columns=['evaded'])
+
+    Y_teste = dfTeste['evaded']
+    X_teste = dfTeste.drop(columns=['evaded'])
+    
+    if(not regressao):
+        Y_treino = Y_treino.to_list()
+        X_treino = X_treino.apply(lambda row: "".join(row.values), axis=1).to_list()
+
+        Y_teste = Y_teste.to_list()
+        X_teste = X_teste.apply(lambda row: "".join(row.values), axis=1).to_list()
+
+        # Transformando objetos em lista dos caractestes de si proprio (Necessário Artmap)
+        Y_treino = [list(aux1) for aux1 in Y_treino]
+        X_treino = [list(aux2) for aux2 in X_treino]
+
+        Y_teste = [list(aux1) for aux1 in Y_teste]
+        X_teste = [list(aux2) for aux2 in X_teste]
+    columns_to_keep.remove('evaded')
+    return(X_treino, Y_treino,X_teste,Y_teste,dataframeCopia,columns_to_keep)
+getInputOutput(undersampling=True,regressao=False)

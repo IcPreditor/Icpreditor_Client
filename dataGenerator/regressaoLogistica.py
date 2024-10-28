@@ -18,13 +18,7 @@ import seaborn as sns
 from sklearn.metrics import classification_report
 
 ## Data
-students_in,students_out,dataframe,feature_cols = processing.getInputOutput()
-X = dataframe[feature_cols]
-Y = dataframe['evaded']
-# Dividir o conjunto de dados em conjuntos de treinamento e teste
-# test_size=0.3 significa que 30% dos dados serão usados para teste e 70% para treinamento
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
-
+X_train, Y_train, X_test, Y_test,dataframe,feature_cols = processing.getInputOutput(regressao=True)
 logreg = LogisticRegression(random_state=16,max_iter=100000)
 logreg.fit(X_train, Y_train)
 
@@ -40,16 +34,6 @@ Y_pred = logreg.predict(X_test)
 # Matriz de confusão 
 cnf_matrix = metrics.confusion_matrix(Y_test, Y_pred)
 
-#c = 0
-#n_Y = len(Y_test)
-#for i in range(n_Y):
-#    if Y_test.iloc[i] == Y_pred[i]:
-#        c+=1
-#print(f'##{c}')
-#print(f'##{n_Y}')
-#print(f'##{c/n_Y:.3f}')
-
-#print(cnf_matrix)
 
 #Plot da matrix
 class_names=['Não evasão','Evasão'] # name  of classes
@@ -72,7 +56,7 @@ print(classification_report(Y_test,Y_pred,target_names=target_names))
 
 #Curva ROC
 y_pred_proba = logreg.predict_proba(X_test)[::,1]
-fpr, tpr, _ = metrics.roc_curve(Y_test,  y_pred_proba)
+fpr, tpr, _ = metrics.roc_curve(Y_test,  y_pred_proba,pos_label='1')
 auc = metrics.roc_auc_score(Y_test, y_pred_proba)
 plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
 plt.legend(loc=4)
