@@ -11,7 +11,7 @@ import sys
 sys.path.insert(1, r'processing')
 import processing
 #All Students Data
-input,output,teste_in,teste_out,dataFrame,variaveis = processing.getInputOutput()
+input,output,teste_in,teste_out,dataFrame,variaveis = processing.getInputOutput(undersampling=False,regressao=False)
 
 print("sample : "+str(len(output)+len(teste_out)))
 print("training : "+str(len(output)))
