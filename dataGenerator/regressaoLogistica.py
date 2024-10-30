@@ -18,14 +18,17 @@ import seaborn as sns
 from sklearn.metrics import classification_report
 
 ## Data
-X_train, Y_train, X_test, Y_test,dataframe,feature_cols = processing.getInputOutput(regressao=True)
+X_train, Y_train, X_test, Y_test,dataframe,feature_cols = processing.getInputOutput(undersampling=False,regressao=True)
 logreg = LogisticRegression(random_state=16,max_iter=100000)
 logreg.fit(X_train, Y_train)
 
 print("Coeficiente de Regressão das Variáveis:")
 coeficientes = logreg.coef_[0]
+coeficientes_dict = {}
 for i in range(len(feature_cols)):
-    print(f"{feature_cols[i]} - [{coeficientes[i]}]")
+    coeficientes_dict[feature_cols[i]]=coeficientes[i]
+for item in sorted(coeficientes_dict,key=coeficientes_dict.get):
+    print(f"{item} - [{coeficientes_dict[item]:.5f}]")
 
 Y_pred = logreg.predict(X_test)
 
