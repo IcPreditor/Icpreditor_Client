@@ -39,10 +39,8 @@ for item, coef in sorted_coef_norm:
     print(f"{item} - [{coef:.5f}]")
 
 # Gráfico de importância das variáveis
-
-#todo: ordenar variaveis.
 plt.figure(figsize=(10, 6))
-sns.barplot(x=[coef for _, coef in sorted_coef_norm], y=[item for item, _ in sorted_coef_norm])
+sns.barplot(x=list(coef_norm.values()), y=list(coef_norm.keys()))
 plt.title("Importância das Variáveis na Predição de Evasão")
 plt.xlabel("Impacto Normalizado")
 plt.ylabel("Variável")
@@ -108,27 +106,24 @@ else:
     print("O conjunto de teste não contém ambas as classes, portanto a curva ROC e a Curva de Precisão-Revocação não podem ser exibidas.")
 
 # Análise por Subgrupos: Exemplo de taxa de evasão por faixa etária
-#todo: ajustar os dados do gráfico.
+age_evasion = dataframeCopia.groupby("idade")["evaded"].mean()
+plt.figure(figsize=(10, 6))
+sns.barplot(x=age_evasion.index, y=age_evasion.values)
+plt.title("Taxa de Evasão por Faixa Etária")
+plt.xlabel("Faixa Etária")
+plt.ylabel("Taxa de Evasão")
+plt.show()
 
-# age_evasion = dataframeCopia.groupby("idade")["evaded"].mean()
-# plt.figure(figsize=(10, 6))
-# sns.barplot(x=age_evasion.index, y=age_evasion.values)
-# plt.title("Taxa de Evasão por Faixa Etária")
-# plt.xlabel("Faixa Etária")
-# plt.ylabel("Taxa de Evasão")
-# plt.show()
+# Análise de Confusão com Limiar Customizado
+threshold = 0.3  # Exemplo de limiar customizado
+Y_pred_custom = (y_pred_proba >= threshold).astype(int)
+cnf_matrix_custom = metrics.confusion_matrix(Y_test, Y_pred_custom)
 
-
-# # Análise de Confusão com Limiar Customizado
-# threshold = 0.3  # Exemplo de limiar customizado
-# Y_pred_custom = (y_pred_proba >= threshold).astype(int)
-# cnf_matrix_custom = metrics.confusion_matrix(Y_test, Y_pred_custom)
-
-# sns.heatmap(pd.DataFrame(cnf_matrix_custom), annot=True, cmap="YlGnBu", fmt='g')
-# plt.title(f"Matriz de Confusão com Limiar {threshold}")
-# plt.xlabel("Previsão")
-# plt.ylabel("Valor Real")
-# plt.show()
+sns.heatmap(pd.DataFrame(cnf_matrix_custom), annot=True, cmap="YlGnBu", fmt='g')
+plt.title(f"Matriz de Confusão com Limiar {threshold}")
+plt.xlabel("Previsão")
+plt.ylabel("Valor Real")
+plt.show()
 
 # Verificação de Overfitting
 train_accuracy = logreg.score(X_train, Y_train)
