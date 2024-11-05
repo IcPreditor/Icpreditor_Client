@@ -12,7 +12,7 @@ import seaborn as sns
 from sklearn.metrics import classification_report, precision_recall_curve, auc
 
 # Carregar dados processados e fazer a divisão treino/teste
-X_train, Y_train, X_test, Y_test, dataframeCopia, feature_cols = processing.getInputOutput(undersampling=True, regressao=True)
+X_train, Y_train, X_test, Y_test, dataframeCopia, feature_cols = processing.getInputOutput(undersampling=False, regressao=True)
 
 # Converter Y_train e Y_test para inteiros para garantir a consistência
 Y_train = Y_train.astype(int)
@@ -106,24 +106,27 @@ else:
     print("O conjunto de teste não contém ambas as classes, portanto a curva ROC e a Curva de Precisão-Revocação não podem ser exibidas.")
 
 # Análise por Subgrupos: Exemplo de taxa de evasão por faixa etária
-age_evasion = dataframeCopia.groupby("idade")["evaded"].mean()
-plt.figure(figsize=(10, 6))
-sns.barplot(x=age_evasion.index, y=age_evasion.values)
-plt.title("Taxa de Evasão por Faixa Etária")
-plt.xlabel("Faixa Etária")
-plt.ylabel("Taxa de Evasão")
-plt.show()
+#todo: ajustar os dados do gráfico.
 
-# Análise de Confusão com Limiar Customizado
-threshold = 0.3  # Exemplo de limiar customizado
-Y_pred_custom = (y_pred_proba >= threshold).astype(int)
-cnf_matrix_custom = metrics.confusion_matrix(Y_test, Y_pred_custom)
+# age_evasion = dataframeCopia.groupby("idade")["evaded"].mean()
+# plt.figure(figsize=(10, 6))
+# sns.barplot(x=age_evasion.index, y=age_evasion.values)
+# plt.title("Taxa de Evasão por Faixa Etária")
+# plt.xlabel("Faixa Etária")
+# plt.ylabel("Taxa de Evasão")
+# plt.show()
 
-sns.heatmap(pd.DataFrame(cnf_matrix_custom), annot=True, cmap="YlGnBu", fmt='g')
-plt.title(f"Matriz de Confusão com Limiar {threshold}")
-plt.xlabel("Previsão")
-plt.ylabel("Valor Real")
-plt.show()
+
+# # Análise de Confusão com Limiar Customizado
+# threshold = 0.3  # Exemplo de limiar customizado
+# Y_pred_custom = (y_pred_proba >= threshold).astype(int)
+# cnf_matrix_custom = metrics.confusion_matrix(Y_test, Y_pred_custom)
+
+# sns.heatmap(pd.DataFrame(cnf_matrix_custom), annot=True, cmap="YlGnBu", fmt='g')
+# plt.title(f"Matriz de Confusão com Limiar {threshold}")
+# plt.xlabel("Previsão")
+# plt.ylabel("Valor Real")
+# plt.show()
 
 # Verificação de Overfitting
 train_accuracy = logreg.score(X_train, Y_train)
