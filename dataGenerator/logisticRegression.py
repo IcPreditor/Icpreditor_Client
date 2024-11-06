@@ -39,8 +39,10 @@ for item, coef in sorted_coef_norm:
     print(f"{item} - [{coef:.5f}]")
 
 # Gráfico de importância das variáveis
+
+#todo: ordenar variaveis.
 plt.figure(figsize=(10, 6))
-sns.barplot(x=list(coef_norm.values()), y=list(coef_norm.keys()))
+sns.barplot(x=[coef for _, coef in sorted_coef_norm], y=[item for item, _ in sorted_coef_norm])
 plt.title("Importância das Variáveis na Predição de Evasão")
 plt.xlabel("Impacto Normalizado")
 plt.ylabel("Variável")
