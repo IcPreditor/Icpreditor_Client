@@ -4,38 +4,29 @@
 
 import numpy as np
 from python_artmap import ARTMAPFUZZY
+from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import sys
 
 sys.path.insert(1, r'processing')
 import processing
 #All Students Data
-students_in,students_out,dataFrame,variaveis = processing.getInputOutput()
-#print(len(students_in))
-#print(len(students_out))
-students_in = [list(aux1) for aux1 in students_in]
-students_out = [[aux2] for aux2 in students_out]
+input,output,teste_in,teste_out,dataFrame,variaveis = processing.getInputOutput(undersampling=False,regressao=False)
 
-#70% of sample to training 30% for testing
-index_sample = len(students_in)-1
-index_training = int(len(students_in)*0.70)
+print("sample : "+str(len(output)+len(teste_out)))
+print("training : "+str(len(output)))
+print("testing : "+str(len(teste_out)))
 
-print("sample : "+str(index_sample))
-print("training : "+str(index_training))
-print("testing : "+str(index_sample-index_training))
+input = np.array(input)
+output = np.array(output)
+teste_in = np.array(teste_in)
+teste_out = np.array(teste_out)
 
-##Training Data 70%
-input = np.array(students_in[0:index_training])
 input = input.astype(int)
-
-output = np.array(students_out[0:index_training])
 output = output.astype(int)
-##Testing Data 30%
-teste_in = np.array(students_in[index_training+1:index_sample])
 teste_in = teste_in.astype(int)
-
-teste_out = np.array(students_out[index_training+1:index_sample])
 teste_out = teste_out.astype(int)
+
 if output[0][0]==0:
     aux3 = [0,1]
 else:
