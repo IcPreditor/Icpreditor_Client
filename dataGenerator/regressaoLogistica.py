@@ -64,3 +64,33 @@ auc = metrics.roc_auc_score(Y_test, y_pred_proba)
 plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
 plt.legend(loc=4)
 plt.show()
+
+
+
+
+
+# Exibir coeficientes de cada variável
+print("Coeficiente de Regressão das Variáveis:")
+
+# Calcular e organizar coeficientes em um DataFrame para melhor análise
+coef_df = pd.DataFrame({
+    'Variável': feature_cols,
+    'Coeficiente': logreg.coef_[0]
+})
+
+# Ordenar pelo valor absoluto do coeficiente para identificar as variáveis com maior impacto
+coef_df['Impacto Absoluto'] = coef_df['Coeficiente'].abs()
+coef_df = coef_df.sort_values(by='Impacto Absoluto', ascending=False)
+
+# Exibir as variáveis em ordem decrescente de impacto
+print(coef_df[['Variável', 'Coeficiente']])
+
+# Visualizar os coeficientes em um gráfico de barras
+plt.figure(figsize=(10, 6))
+sns.barplot(data=coef_df, y='Variável', x='Coeficiente', hue='Coeficiente', dodge=False, palette='coolwarm', legend=False)
+plt.title('Impacto das Variáveis na Evasão')
+plt.xlabel('Coeficiente')
+plt.ylabel('Variável')
+plt.axvline(0, color='black', linewidth=0.5)  # Linha para separar coeficientes positivos e negativos
+plt.show()
+

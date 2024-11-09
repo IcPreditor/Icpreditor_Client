@@ -1,11 +1,17 @@
-#ReadMe Provisório
+# ReadMe Provisório
 
-data/credentials.json
+## Coloque suas credenciais no arquivo credentials.json
+cd data/credentials.json
 
 {"credentials":{"username":"matricula","password":"senhaSCAOS#"}}
 
+## Instalar dependências
+pip install -r requirements.txt
+
+## Gerar arquivo com todos os alunos
 python3 genStudents.py
 
+## Roda o ArtMap Fuzzy
 python3 testeRho.py
 
 
