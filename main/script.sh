@@ -51,13 +51,18 @@ else
 	echo "Instalação cancelada pelo usuário."
 	exit 1
 fi
+echo "Recuperando estudantes"
 # gera estudantes para treino
-$python_cmd ../dataGenerator/genStudents.py 
+$python_cmd ../dataGenerator/genStudents.py
+# Deleta credentials após geração de token
+rm ../data/credentials.json
 
+echo "Recuperando estudantes pela matricula"
 # estudantes para prever TO DO
 $python_cmd ../dataGenerator/getStudent.py $1
 
-# regressão logistica
-$python_cmd ../data/dataGenerator/logisticRegression.py
+echo "Iniciando Regressão Logística"
+# regressão logistica treinamento, teste e previsão
+$python_cmd ../data/dataGenerator/logisticRegression.py 
 
-echo "Recuperando estudantes"
+
