@@ -45,7 +45,7 @@ resposta = ${resposta,,}
 if [[ "$resposta" == "s" || "$resposta" == "sim" || "$resposta" == "y" || "$resposta" == "yes" ]]; then
 	# Execurtar o comando de instalação
 	echo "Instalando os Módulos ..."
-	pip install requirements.txt
+	pip install -r requirements.txt
 	echo "Instalação concluída!"
 else 
 	echo "Instalação cancelada pelo usuário."
