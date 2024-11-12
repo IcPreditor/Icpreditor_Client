@@ -23,23 +23,24 @@ def getProfile(token):
 def saveStudent(token,matricula):
     headers = {'content-type':'application/json',"token-de-autenticacao":token}
     request = req.get(url_eureca+f"/estudantes/estudante?estudante={matricula}",headers=headers)
-    with open("data/student.json","w") as students_file:
-        json.dump(request.json(),students_file)
+    return(request.json())
 
 #Opens file with credentials (token.json)
 token_file = open("data/token.json","r")
 
 #loads token.json
 token = json.load(token_file)["token"]
-print(token)
 
-#close file dados.json
-token_file.close()
+with open('data/studentsPred.json','w') as studentsPred_file:
+    json.dump([],studentsPred_file)
 
-#define matricula 
-matricula = sys.argv[1]
-print(matricula)
-#get profile
-print(getProfile(token))
-#Salva estudante pela matricula
-print(saveStudent(token,matricula))
+with open('data/studentsPred.json','r') as studentsPred_file:
+    studentsPred = json.load(studentsPred_file)
+
+with open('main/matriculas.txt','r') as matricula_file:
+    for matricula in matricula_file:
+        matricula = matricula.strip()
+        studentsPred.append(saveStudent(token,matricula))
+
+with open('data/studentsPred.json','w') as studentsPred_file:
+    json.dump(studentsPred,studentsPred_file)
