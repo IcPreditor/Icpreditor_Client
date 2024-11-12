@@ -38,12 +38,10 @@ Y_pred = logreg.predict(X_test)
 acuracia = accuracy_score(Y_test, Y_pred)
 print(acuracia)
 
-X_prev = getInputOutput()
+X_prev,dataframeCopia,columns_to_keep = getInputOutput()
 
-print(X_prev)
-
-# Y_prev = logreg.predict(X_prev)
-
+Y_prev = logreg.predict(X_prev)
+print(Y_prev)
 #Métricas de avliação matriz de confusão
 target_names = ["Não Evasão","Evasão"]
 print(classification_report(Y_test,Y_pred,target_names=target_names))
