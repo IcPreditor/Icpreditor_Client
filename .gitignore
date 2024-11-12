@@ -3,5 +3,6 @@ student.json
 credentials.json
 token.json
 students.json
+studentsPred.json
 coursesActives.json
 __pycache__
