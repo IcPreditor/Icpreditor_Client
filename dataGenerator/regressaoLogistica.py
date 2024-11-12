@@ -40,8 +40,12 @@ print(acuracia)
 
 X_prev,dataframeCopia,columns_to_keep = getInputOutput()
 
+matriculas = X_prev['matricula_do_estudante']
+X_prev = X_prev.drop(columns='matricula_do_estudante')
+
 Y_prev = logreg.predict(X_prev)
 print(Y_prev)
+print(list(matriculas))
 #Métricas de avliação matriz de confusão
 target_names = ["Não Evasão","Evasão"]
 print(classification_report(Y_test,Y_pred,target_names=target_names))

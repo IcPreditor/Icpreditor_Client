@@ -198,7 +198,7 @@ def getInputOutput():
     dataframe['cra'] = (dataframe["notas_acumuladas"]/dataframe["creditos_do_cra"]).apply(cra_binary)
     
     # Colunas a serem mantidas
-    columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente", "nome_do_setor",'taxa_de_sucesso','cra']
+    columns_to_keep = ['matricula_do_estudante',"idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente", "nome_do_setor",'taxa_de_sucesso','cra']
     # Remover todas as colunas que não estão em columns_to_keep
     # Dataframe se torna dataframe_balanced
     dataframeCopia = dataframe
@@ -207,7 +207,7 @@ def getInputOutput():
     # Substituir NaN por binário de 0s
     dataframe.fillna("0", inplace=True)
     
-    dataframe = dataframe.reindex(['turno_do_curso','nome_do_setor','estado_civil','genero','idade','cor','tipo_de_ensino_medio','politica_afirmativa','prac_renda_per_capita_ate','taxa_de_sucesso','prac_deficiente','cra'], axis=1)
+    dataframe = dataframe.reindex(['matricula_do_estudante','turno_do_curso','nome_do_setor','estado_civil','genero','idade','cor','tipo_de_ensino_medio','politica_afirmativa','prac_renda_per_capita_ate','taxa_de_sucesso','prac_deficiente','cra'], axis=1)
     X_previsao = dataframe
     return(X_previsao,dataframeCopia,columns_to_keep)
 getInputOutput()
