@@ -21,11 +21,6 @@ from datetime import datetime as dt
 #    evadidos = dataframe[dataframe['evaded'] == 1]
 #    nao_evadidos = dataframe[dataframe['evaded'] == 0]
 
-
-
-
-
-
 def load_large_json(file_path):
     return pd.read_json(file_path)
 
@@ -158,6 +153,7 @@ def calcular_idade(data_nascimento):
     if (hoje.month, hoje.day) < (data_nascimento.month, data_nascimento.day):
         idade -= 1
     return idade
+
 def getInputOutput():
     # Caminho para o arquivo JSON
     file_path = r'data/studentsPred.json'
