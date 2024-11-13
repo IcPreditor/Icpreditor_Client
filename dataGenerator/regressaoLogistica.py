@@ -36,7 +36,7 @@ for item in sorted(coeficientes_dict,key=coeficientes_dict.get):
 Y_pred = logreg.predict(X_test)
 
 acuracia = accuracy_score(Y_test, Y_pred)
-print(acuracia)
+print("Acurácia: ",acuracia)
 
 X_prev,dataframeCopia,columns_to_keep = getInputOutput()
 
@@ -44,8 +44,21 @@ matriculas = X_prev['matricula_do_estudante']
 X_prev = X_prev.drop(columns='matricula_do_estudante')
 
 Y_prev = logreg.predict(X_prev)
-print(Y_prev)
-print(list(matriculas))
+
+# Mapeando os valores para as strings desejadas
+Y_prev_mapped = ['Sem risco' if y == '0' else 'Com risco' for y in Y_prev]
+
+# Criando um DataFrame com o resultado formatado
+resultado_df = pd.DataFrame({
+    'matrícula': matriculas,
+    'Evasão': Y_prev_mapped
+})
+
+print("Matrícula - Evasão")
+# Exibindo no formato desejado
+for index, row in resultado_df.iterrows():
+    print(f"{row['matrícula']} - {row['Evasão']}")
+
 #Métricas de avliação matriz de confusão
 target_names = ["Não Evasão","Evasão"]
 print(classification_report(Y_test,Y_pred,target_names=target_names))
