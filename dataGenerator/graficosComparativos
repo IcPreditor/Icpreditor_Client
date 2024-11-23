@@ -1,0 +1,117 @@
+## Importar módulos necessários
+import sys
+sys.path.insert(1, r'processing')
+import processing
+
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import classification_report, precision_recall_curve, auc
+
+# Carregar dados processados e fazer a divisão treino/teste
+X_train, Y_train, X_test, Y_test, dataframeCopia, feature_cols = processing.getInputOutput(undersampling=False, regressao=True)
+print(dataframeCopia['idade'].value_counts())
+
+# Verificar e converter `X_train` e `X_test` para numérico
+#X_train = X_train.apply( errors='coerce').fillna(0)
+#X_test = X_test.apply( errors='coerce').fillna(0)
+
+
+# Treinar o modelo de Regressão Logística
+logreg = LogisticRegression(random_state=16, max_iter=100000)
+logreg.fit(X_train, Y_train)
+
+# Exibir os coeficientes de cada variável
+print("Coeficiente de Regressão das Variáveis:")
+coeficientes = logreg.coef_[0]
+coeficientes_dict = {feature_cols[i]: coef for i, coef in enumerate(coeficientes)}
+
+# Exibir variáveis ordenadas por impacto (coeficientes normalizados)
+coef_norm = {k: abs(v) for k, v in coeficientes_dict.items()}
+sorted_coef_norm = sorted(coef_norm.items(), key=lambda x: x[1], reverse=True)
+print("\nVariáveis mais impactantes (normalizadas):")
+for item, coef in sorted_coef_norm:
+    print(f"{item} - [{coef:.5f}]")
+
+# Fazer previsões no conjunto de teste
+Y_pred = logreg.predict(X_test)
+
+positivos_reais = []
+negativos_reais = []
+positivos_falsos = []
+negativos_falsos = []
+# 0 / positivo / Não Evasão
+# 1 / negativo / Evasão
+for i in range(len(Y_pred)):
+    if Y_pred[i] == Y_test.iloc[i]:
+        if Y_pred[i]=='0':
+            positivos_reais.append(i)
+        else:
+            negativos_reais.append(i) 
+    else:
+        if Y_pred[i]=='0':
+            positivos_falsos.append(i)
+        else:
+            negativos_falsos.append(i) 
+
+labels = ['Positivo','Negativo','Falso Positivo','Falso Negativo']
+listas = [positivos_reais,negativos_reais,positivos_falsos,negativos_falsos]
+print(listas)
+percentuais = {}
+def plotGraficoComparativo(variavel):
+    for nome, lista in zip(labels, listas):
+        if lista:
+            indices_validos = [idx for idx in lista if idx in X_test.index]
+            if indices_validos:
+                # Filtrar o DataFrame pelos índices válidos
+                df_lista = X_test.iloc[indices_validos]
+                # Contar os valores na coluna 'Categoria'
+                counts = df_lista[variavel].value_counts(normalize=True) * 100
+                print(counts)
+                percentuais[nome] = counts
+            else:
+                print(f"Todos os índices da {nome} são inválidos.")
+        else:
+            print(f"A lista {nome} está vazia.")
+
+    categorias = X_test[variavel].unique()
+    print(categorias)
+    x = np.arange(len(categorias))
+    largura = 0.2
+
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    bars = []
+
+    for i, (label, counts) in enumerate(percentuais.items()):
+        valores = [counts.get(categoria,0) for categoria in categorias]
+        bar = ax.bar(x+i*largura,valores,width=largura,label=label)
+        bars.append(bar)
+
+    # Adicionando os valores em cima das barras
+    for bar_group in bars:
+        ax.bar_label(bar_group, fmt='%.1f%%', padding=3,fontsize=8)
+
+    ax.set_title(f'{variavel.upper()} Comparativo',fontsize =14)
+    ax.set_xlabel(variavel.upper(),fontsize=12)
+    ax.set_ylabel('Porcentagem (%)', fontsize=12)
+    ax.set_xticks(x + largura * (len(percentuais) - 1) / 2)
+    ax.set_xticklabels(categorias)
+    ax.legend(title='Legenda')
+    plt.xticks(rotation=0)
+    plt.tight_layout()
+    
+    plt.savefig(f'{variavel}_porcentagem.png',dpi=300,bbox_inches='tight')
+    plt.close(fig)
+
+def retraducao(var,counts):
+    match var:
+        case cra:
+            x=1
+#for var in feature_cols:
+#    plotGraficoComparativo(var)
+plotGraficoComparativo('cra')
