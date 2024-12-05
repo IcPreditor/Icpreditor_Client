@@ -15,12 +15,12 @@ from sklearn.metrics import classification_report, precision_recall_curve, auc
 X_train, Y_train, X_test, Y_test, dataframeCopia, feature_cols = processing.getInputOutput(undersampling=False, regressao=True)
 
 # Converter Y_train e Y_test para inteiros para garantir a consistência
-Y_train = Y_train.astype(int)
-Y_test = Y_test.astype(int)
+#Y_train = Y_train.astype(int)
+#Y_test = Y_test.astype(int)
 
 # Verificar e converter `X_train` e `X_test` para numérico
-X_train = X_train.apply(pd.to_numeric, errors='coerce').fillna(0)
-X_test = X_test.apply(pd.to_numeric, errors='coerce').fillna(0)
+#X_train = X_train.apply(pd.to_numeric, errors='coerce').fillna(0)
+#X_test = X_test.apply(pd.to_numeric, errors='coerce').fillna(0)
 
 # Treinar o modelo de Regressão Logística
 logreg = LogisticRegression(random_state=16, max_iter=100000)
@@ -79,7 +79,7 @@ print(pd.Series(Y_test).value_counts())
 # Curva ROC e AUC, somente se ambas as classes estiverem presentes em Y_test
 if len(set(Y_test)) > 1:
     y_pred_proba = logreg.predict_proba(X_test)[::, 1]  # Probabilidade da classe positiva (evasão)
-    fpr, tpr, _ = metrics.roc_curve(Y_test, y_pred_proba, pos_label=1)
+    fpr, tpr, _ = metrics.roc_curve(Y_test, y_pred_proba, pos_label='1')
     auc_roc = metrics.roc_auc_score(Y_test, y_pred_proba)
 
     # Plot da Curva ROC
@@ -94,7 +94,7 @@ if len(set(Y_test)) > 1:
     plt.show()
 
     # Curva de Precisão-Revocação
-    precision, recall, _ = precision_recall_curve(Y_test, y_pred_proba)
+    precision, recall, _ = precision_recall_curve(Y_test, y_pred_proba,pos_label='1')
     pr_auc = auc(recall, precision)
     plt.figure(figsize=(8, 6))
     plt.plot(recall, precision, label="AUC PR = {:.2f}".format(pr_auc))
