@@ -54,17 +54,23 @@ resultado_df = pd.DataFrame({
     'Evasão': Y_prev_mapped
 })
 
-print("Matrícula - Evasão")
-# Exibindo no formato desejado
-for index, row in resultado_df.iterrows():
-    print(f"{row['matrícula']} - {row['Evasão']}")
+# Filtrando apenas os alunos com risco de evasão
+resultado_risco_df = resultado_df[resultado_df['Evasão'] == 'Com risco']
+
+if resultado_risco_df.empty:
+    print("Não tem alunos com risco de evasão")
+else:
+    print("Matrícula - Evasão")
+    # Exibindo no formato desejado
+    for index, row in resultado_risco_df.iterrows():
+        print(f"{row['matrícula']} - {row['Evasão']}")
 
 #Métricas de avliação matriz de confusão
 target_names = ["Não Evasão","Evasão"]
-print(classification_report(Y_test,Y_pred,target_names=target_names))
+# print(classification_report(Y_test,Y_pred,target_names=target_names))
 
 # Exibir coeficientes de cada variável
-print("Coeficiente de Regressão das Variáveis:")
+# print("Coeficiente de Regressão das Variáveis:")
 
 # Calcular e organizar coeficientes em um DataFrame para melhor análise
 coef_df = pd.DataFrame({
@@ -77,7 +83,7 @@ coef_df['Impacto Absoluto'] = coef_df['Coeficiente'].abs()
 coef_df = coef_df.sort_values(by='Impacto Absoluto', ascending=False)
 
 # Exibir as variáveis em ordem decrescente de impacto
-print(coef_df[['Variável', 'Coeficiente']])
+# print(coef_df[['Variável', 'Coeficiente']])
 
 
 
