@@ -221,7 +221,7 @@ def getInputOutput(undersampling=True,regressao=False):
     print(dataframe.value_counts("evaded"))
 
     # Colunas a serem mantidas
-    columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente", "nome_do_setor",'taxa_de_sucesso','cra','evaded']
+    columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente", "nome_do_setor",'taxa_de_sucesso','cra','evaded','motivo_de_evasao']
     dataframeCopia = dataframe
     # Remover todas as colunas que não estão em columns_to_keep
     # Dataframe se torna dataframe_balanced

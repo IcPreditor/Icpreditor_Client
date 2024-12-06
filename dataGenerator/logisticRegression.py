@@ -14,6 +14,11 @@ from sklearn.metrics import classification_report, precision_recall_curve, auc
 # Carregar dados processados e fazer a divisão treino/teste
 X_train, Y_train, X_test, Y_test, dataframeCopia, feature_cols = processing.getInputOutput(undersampling=False, regressao=True)
 
+X_test = X_test.drop(columns=['motivo_de_evasao'])
+X_train = X_train.drop(columns=['motivo_de_evasao'])
+Y_test = Y_test.drop(columns=['motivo_de_evasao'])
+Y_train = Y_train.drop(columns=['motivo_de_evasao'])
+
 # Converter Y_train e Y_test para inteiros para garantir a consistência
 #Y_train = Y_train.astype(int)
 #Y_test = Y_test.astype(int)
@@ -30,7 +35,7 @@ logreg.fit(X_train, Y_train)
 print("Coeficiente de Regressão das Variáveis:")
 coeficientes = logreg.coef_[0]
 coeficientes_dict = {feature_cols[i]: coef for i, coef in enumerate(coeficientes)}
-
+print()
 # Exibir variáveis ordenadas por impacto (coeficientes normalizados)
 coef_norm = {k: abs(v) for k, v in coeficientes_dict.items()}
 sorted_coef_norm = sorted(coef_norm.items(), key=lambda x: x[1], reverse=True)
