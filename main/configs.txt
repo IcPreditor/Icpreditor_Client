@@ -1,0 +1,4 @@
+KEEP_SESSION=false
+periodoInicio=2020.1
+periodoFim=2024.1
+cursoId=1234

@@ -5,4 +5,4 @@ token.json
 students.json
 studentsPred.json
 coursesActives.json
-__pycache__
+processing/__pycache__/

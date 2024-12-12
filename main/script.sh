@@ -1,6 +1,41 @@
 #!/bin/bash
 #Script Inicializador
 
+# Caminho para o arquivo que armazenará o valor de KEEP_SESSION
+CONFIG_FILE="./keep_session_config.txt"
+
+# valor default KEEP_SESSION=false, pede login
+# se valor for true e tiver o arquivo token.json, não solicita o login.
+# $python_cmd ../dataGenerator/genStudents.py se  esse comando retornar erro no arquivo
+
+
+
+
+
+# # Função para perguntar ao usuário e armazenar o valor de KEEP_SESSION
+# ask_keep_session() {
+#     if [[ "$resposta" == "sim" ]]; then
+#         echo "Sessão de login será mantida."
+#     elif [[ "$resposta" == "nao" ]]; then
+#         echo "KEEP_SESSION=nao" > "$CONFIG_FILE"
+#         echo "Sessão de login não será mantida."
+#     else
+#         echo "Resposta inválida. Tente novamente."
+#         ask_keep_session
+#     fi
+# }
+
+# # Verifica se o arquivo de configuração existe
+# if [[ -f "$CONFIG_FILE" ]]; then
+#     # Lê o valor de KEEP_SESSION do arquivo
+#     source "$CONFIG_FILE"
+#     echo "Configuração encontrada: KEEP_SESSION=$KEEP_SESSION"
+# else
+#     # Pergunta ao usuário caso seja a primeira execução
+#     echo "Configuração de KEEP_SESSION não encontrada."
+#     ask_keep_session
+# fi
+
 #Credentials
 echo 'Login Scao:'
 read login
@@ -19,7 +54,6 @@ echo "{
 }" > "$caminho_arquivo"
 
 
-# Verifica se python3 está disponível
 if command -v python3 &>/dev/null; then
 	python_cmd="python3"
 elif command -v python &>/dev/null; then
@@ -51,6 +85,9 @@ else
 	echo "Instalação cancelada pelo usuário."
 	exit 1
 fi
+echo "Fazendo login"
+$python_cmd ../dataGenerator/tokenCheck.py
+
 echo "Recuperando estudantes"
 # gera estudantes para treino
 $python_cmd ../dataGenerator/genStudents.py
