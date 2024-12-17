@@ -118,8 +118,6 @@ def cra_binary(cra):
         return '001'
     elif cra <=7:
         return '010'
-    elif cra <=7:
-        return '011'
     elif cra <=8:
         return '100'
     elif cra <=10:
