@@ -12,16 +12,6 @@ url_token = 'https://eureca.sti.ufcg.edu.br/as'
 #url_token = 'https://pre.ufcg.edu.br:8443/as_scao'
 #url_eureca = 'https://eureca.sti.ufcg.edu.br/das'
 url_eureca= 'https://eureca.sti.ufcg.edu.br/das/v2'
-#request token
-def genToken(data):
-    request = req.post((url_token+"/tokens"), json=data )
-    #token = r.json()['token']
-    #saves token in token.json
-    with open("data/token.json","w") as token_file:
-        json.dump(request.json(),token_file)
-    #retorna token
-    print(request.json())
-    return request.json()["token"]
 
 #request profile (using token)
 def getProfile(token):
@@ -45,17 +35,21 @@ def saveStudents(token,inicio="2018.1",fim="2023.2"):
     with open("data/students.json","w") as students_file:
         json.dump(request.json(),students_file)
 
-#Opens file with credentials (credentials.json)
-credentials = open("data/credentials.json","r")
+# #Opens file with credentials (credentials.json)
+# credentials = open("data/credentials.json","r")
 
-#loads .json
-data = json.load(credentials)
+# #loads .json
+# data = json.load(credentials)
 
-#request token 
-token = genToken(data)
 
-#close file dados.json
-credentials.close()
+#Opens file with credentials (token.json)
+token_file = open("data/token.json","r")
+
+#loads token.json
+token = json.load(token_file)["token"]
+
+# #close file dados.json
+# credentials.close()
 
 #get profile
 print(getProfile(token))

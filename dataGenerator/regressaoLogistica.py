@@ -4,7 +4,9 @@ import pandas as pd
 ##Import dados processados
 import sys
 sys.path.insert(1, r'processing')
-import processing
+sys.path.insert(1, r'processingPrevisao')
+from processingPrevisao import getInputOutput
+import processing 
 ##Import Divisor de teste treino
 from sklearn.model_selection import train_test_split
 ##Import Modelo Regressão Logística 
@@ -16,6 +18,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 ##Import para classificação da matriz de confusão
 from sklearn.metrics import classification_report
+from sklearn.metrics import accuracy_score
 
 ## Data
 X_train, Y_train, X_test, Y_test,dataframe,feature_cols = processing.getInputOutput(undersampling=False,regressao=True)
@@ -32,45 +35,42 @@ for item in sorted(coeficientes_dict,key=coeficientes_dict.get):
 
 Y_pred = logreg.predict(X_test)
 
+acuracia = accuracy_score(Y_test, Y_pred)
+print("Acurácia: ",acuracia)
 
-# Exibir previsões feitas pelo modelo
-# Matriz de confusão 
-cnf_matrix = metrics.confusion_matrix(Y_test, Y_pred)
+X_prev,dataframeCopia,columns_to_keep = getInputOutput()
 
+matriculas = X_prev['matricula_do_estudante']
+X_prev = X_prev.drop(columns='matricula_do_estudante')
 
-#Plot da matrix
-class_names=['Não evasão','Evasão'] # name  of classes
-fig, ax = plt.subplots()
-tick_marks = np.arange(len(class_names))
-plt.xticks(tick_marks, class_names)
-plt.yticks(tick_marks, class_names)
-# create heatmap
-sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu" ,fmt='g')
-ax.xaxis.set_label_position("top")
-plt.tight_layout()
-plt.title('Confusion matrix', y=1.1)
-plt.ylabel('Valor Real')
-plt.xlabel('Previsão')
-plt.show()
+Y_prev = logreg.predict(X_prev)
+
+# Mapeando os valores para as strings desejadas
+Y_prev_mapped = ['Sem risco' if y == '0' else 'Com risco' for y in Y_prev]
+
+# Criando um DataFrame com o resultado formatado
+resultado_df = pd.DataFrame({
+    'matrícula': matriculas,
+    'Evasão': Y_prev_mapped
+})
+
+# Filtrando apenas os alunos com risco de evasão
+resultado_risco_df = resultado_df[resultado_df['Evasão'] == 'Com risco']
+
+if resultado_risco_df.empty:
+    print("Não tem alunos com risco de evasão")
+else:
+    print("Matrícula - Evasão")
+    # Exibindo no formato desejado
+    for index, row in resultado_risco_df.iterrows():
+        print(f"{row['matrícula']} - {row['Evasão']}")
 
 #Métricas de avliação matriz de confusão
 target_names = ["Não Evasão","Evasão"]
-print(classification_report(Y_test,Y_pred,target_names=target_names))
-
-#Curva ROC
-y_pred_proba = logreg.predict_proba(X_test)[::,1]
-fpr, tpr, _ = metrics.roc_curve(Y_test,  y_pred_proba,pos_label='1')
-auc = metrics.roc_auc_score(Y_test, y_pred_proba)
-plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
-plt.legend(loc=4)
-plt.show()
-
-
-
-
+# print(classification_report(Y_test,Y_pred,target_names=target_names))
 
 # Exibir coeficientes de cada variável
-print("Coeficiente de Regressão das Variáveis:")
+# print("Coeficiente de Regressão das Variáveis:")
 
 # Calcular e organizar coeficientes em um DataFrame para melhor análise
 coef_df = pd.DataFrame({
@@ -83,14 +83,7 @@ coef_df['Impacto Absoluto'] = coef_df['Coeficiente'].abs()
 coef_df = coef_df.sort_values(by='Impacto Absoluto', ascending=False)
 
 # Exibir as variáveis em ordem decrescente de impacto
-print(coef_df[['Variável', 'Coeficiente']])
+# print(coef_df[['Variável', 'Coeficiente']])
 
-# Visualizar os coeficientes em um gráfico de barras
-plt.figure(figsize=(10, 6))
-sns.barplot(data=coef_df, y='Variável', x='Coeficiente', hue='Coeficiente', dodge=False, palette='coolwarm', legend=False)
-plt.title('Impacto das Variáveis na Evasão')
-plt.xlabel('Coeficiente')
-plt.ylabel('Variável')
-plt.axvline(0, color='black', linewidth=0.5)  # Linha para separar coeficientes positivos e negativos
-plt.show()
+
 

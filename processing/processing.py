@@ -118,8 +118,6 @@ def cra_binary(cra):
         return '001'
     elif cra <=7:
         return '010'
-    elif cra <=7:
-        return '011'
     elif cra <=8:
         return '100'
     elif cra <=10:
@@ -158,7 +156,7 @@ def income_to_binary(prac_renda_per_capita_ate):
     else:
         return '110'
 
-def getInputOutput(undersampling=True,regressao=False):
+def getInputOutput(undersampling=True,regressao=False,evadedColumn=False):
     # Caminho para o arquivo JSON
     file_path = r'data/students.json'
     
@@ -221,7 +219,10 @@ def getInputOutput(undersampling=True,regressao=False):
     print(dataframe.value_counts("evaded"))
 
     # Colunas a serem mantidas
-    columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente", "nome_do_setor",'taxa_de_sucesso','cra','evaded']
+    columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente", "nome_do_setor",'taxa_de_sucesso','cra','evaded','motivo_de_evasao']
+    if(evadedColumn):
+        columns_to_keep.append('evaded')
+        columns_to_keep.append('nome_do_curso')
     dataframeCopia = dataframe
     # Remover todas as colunas que não estão em columns_to_keep
     # Dataframe se torna dataframe_balanced
