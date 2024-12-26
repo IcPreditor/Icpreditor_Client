@@ -53,7 +53,7 @@ binary_mappings = {
     "nacionalidade": {"BRASILEIRA": "0", "ESTRANGEIRA": "1"},
     "estado_civil": {"SOLTEIRO": "000", "CASADO": "001",  "VIÚVO": "010", "DIVORCIADO": "011","SEPARADO JUDICIALMENTE":"011", "-": "101"},
     "situacao": {"INATIVO": "0", "ATIVO": "1"},
-    "politica_afirmativa": {"BON. ESTADUAL": "00000", "L1": "00001", "L2": "00010", "L5": "00011", "L6": "00100", "L9": "00101", "L10": "00110", "L13": "00111", "L14": "01000", "-": "01001", "LI_PPI": "01010", "LI_PCD": "01011", "LI_EP": "01100", "LB_EP": "01101", "LB_Q": "01110", "LB_PPI": "01111", "LB_PCD": "10001"},
+    "politica_afirmativa": {"BON. ESTADUAL": "0010", "L1": "0011", "L2": "0100", "L5": "0101", "L6": "0110", "L9": "0111", "L10": "1000", "L13": "1001", "L14": "1010", "-": "0001", "LI_PPI": "0110", "LI_PCD": "1001", "LI_EP": "0101", "LB_EP": "0011", "LB_Q": "1011", "LB_PPI": "0100", "LB_PCD": "0111"},
     "tipo_de_ensino_medio": {"SOMENTE ESCOLA PRIVADA": "000", "SOMENTE ESCOLA PÚBLICA": "001", "PÚBLICA E PRIVADA, TENDO FICADO MAIS TEMPO EM ESCOLA PÚBLICA": "010", "PÚBLICA E PRIVADA, TENDO FICADO MAIS TEMPO EM ESCOLA PRIVADA": "011", "-": "100"},
     "cor": {"BRANCA": "000", "PRETA": "001", "PARDA": "010", "AMARELA": "011", "NÃO DECLARADA": "100", "INDÍGENA":"101","-": "111"},
     "prac_deficiente": {"NÃO": "00", "SIM": "01", "-": "10"},
