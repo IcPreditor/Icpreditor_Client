@@ -26,21 +26,23 @@ def saveStudent(token,matricula):
     return(request.json())
 
 #Opens file with credentials (token.json)
-token_file = open("data/token.json","r")
+token_file = open("../data/token.json","r")
 
 #loads token.json
 token = json.load(token_file)["token"]
 
-with open('data/studentsPred.json','w') as studentsPred_file:
+with open('../data/studentsPrediction.json','w') as studentsPred_file:
     json.dump([],studentsPred_file)
 
-with open('data/studentsPred.json','r') as studentsPred_file:
+with open('../data/studentsPrediction.json','r') as studentsPred_file:
     studentsPred = json.load(studentsPred_file)
 
-with open('main/matriculas.txt','r') as matricula_file:
+#salva cada aluno (recuperado pelas matriculas em matriculas.txt) em uma lista
+with open('matriculas.txt','r') as matricula_file:
     for matricula in matricula_file:
         matricula = matricula.strip()
         studentsPred.append(saveStudent(token,matricula))
 
-with open('data/studentsPred.json','w') as studentsPred_file:
+#salvas os alunos da lista studentsPred em um .json
+with open('../data/studentsPrediction.json','w') as studentsPred_file:
     json.dump(studentsPred,studentsPred_file)

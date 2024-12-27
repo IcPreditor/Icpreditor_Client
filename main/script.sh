@@ -2,15 +2,11 @@
 #Script Inicializador
 
 # Caminho para o arquivo que armazenará o valor de KEEP_SESSION
-CONFIG_FILE="./keep_session_config.txt"
+#CONFIG_FILE="./keep_session_config.txt"
 
 # valor default KEEP_SESSION=false, pede login
 # se valor for true e tiver o arquivo token.json, não solicita o login.
 # $python_cmd ../dataGenerator/genStudents.py se  esse comando retornar erro no arquivo
-
-
-
-
 
 # # Função para perguntar ao usuário e armazenar o valor de KEEP_SESSION
 # ask_keep_session() {
@@ -35,15 +31,23 @@ CONFIG_FILE="./keep_session_config.txt"
 #     echo "Configuração de KEEP_SESSION não encontrada."
 #     ask_keep_session
 # fi
+deleteTemp(){
+	# Deleta credentials temporarias
+	rm ../data/credentials.json
+}
 
-#Credentials
+config="configs.txt"
+#Ask for Credentials
 echo 'Login Scao:'
 read login
 
 echo 'Senha:'
-read -s senha
+read senha
 
 caminho_arquivo="../data/credentials.json"
+caminho_requirements="../requirements.txt"
+
+#cria arquivo de credentials (temporario)
 mkdir -p "$(dirname "$caminho_arquivo")"
 
 echo "{
@@ -53,7 +57,7 @@ echo "{
   }
 }" > "$caminho_arquivo"
 
-
+#verifica python instalado
 if command -v python3 &>/dev/null; then
 	python_cmd="python3"
 elif command -v python &>/dev/null; then
@@ -62,44 +66,81 @@ else
 	echo "Erro: Nenhuma versão do Python foi encontrada"
 	exit 1
 fi
-
-$python_cmd main.py
-
-if [ ! -f ../requirements.txt ]; then
+# verifica se requirements está presente 
+if [ ! -f $caminho_requirements ]; then
     echo "Arquivo requirements.txt não encontrado!"
     exit 1
 fi
 
 echo "Conteúdo do requirements.txt:"
-cat requirements.txt
+cat $caminho_requirements
 read -p "Deseja instalar os módulos listados em requirements.txt ? (s/n)" resposta
 #converter em minúsculo
-resposta = ${resposta,,}
+resposta=${resposta,,}
 
 if [[ "$resposta" == "s" || "$resposta" == "sim" || "$resposta" == "y" || "$resposta" == "yes" ]]; then
 	# Execurtar o comando de instalação
 	echo "Instalando os Módulos ..."
-	pip install -r requirements.txt
+	$python_cmd -m pip install -r ../requirements.txt
 	echo "Instalação concluída!"
 else 
 	echo "Instalação cancelada pelo usuário."
 	exit 1
 fi
+
+#Gera token
 echo "Fazendo login"
 $python_cmd ../dataGenerator/tokenCheck.py
 
-echo "Recuperando estudantes"
+deleteTemp
+
+echo "Recuperando estudantes para treino da Regressão Logistica"
 # gera estudantes para treino
 $python_cmd ../dataGenerator/genStudents.py
-# Deleta credentials após geração de token
-rm ../data/credentials.json
+echo "Estudantes de treino Recuperados"
 
-echo "Recuperando estudantes pela matricula"
-# estudantes para prever TO DO
-$python_cmd ../dataGenerator/getStudent.py $1
+#Config Keep Session
+keep_session_config=$(grep "^keep_session=" "$config")
+if [ -n $keep_session_config ]; then
+	keep_session=${keep_session_config#*=}
+	echo $keep_session
+fi
+
+#Config students By Course
+byCourse_config=$(grep "^studentsByCourse=" "$config")
+if [ -n $byCourse_config ]; then
+	byCourse=${byCourse_config#*=}
+	echo $byCourse
+fi
+
+if [ $byCourse == "true" ]; then
+	#Config codigo do curso
+	courseId_config=$(grep "^cursoId=" "$config")
+	if [ -n $courseId_config ]; then
+		courseId=${courseId_config#*=}
+		echo $courseId
+	fi
+	#Config begin 
+	inicio_config=$(grep "^periodoInicio=" "$config")
+	if [ -n $inicio_config ]; then
+		inicio=${inicio_config#*=}
+		echo "Periodo de Inicio" $inicio
+	fi
+	#Config end 
+	fim_config=$(grep "^periodoFim=" "$config")
+	if [ -n $fim_config ]; then
+		fim=${fim_config#*=}
+		echo "Periodo de Fim" $fim
+	fi
+	# estudantes por codigo de curso 
+	echo "Recuperando estudantes pelo curso configurado em configs.txt"
+	$python_cmd ../dataGenerator/genStudentsByCourse.py $courseId $inicio $fim
+else
+	# estudantes em matricula.txt
+	echo "Recuperando estudantes pela matricula em matriculas.txt"
+	$python_cmd ../dataGenerator/getStudent.py 
+fi
 
 echo "Iniciando Regressão Logística"
 # regressão logistica treinamento, teste e previsão
-$python_cmd ../data/dataGenerator/logisticRegression.py 
-
-
+$python_cmd ../dataGenerator/regressaoLogistica.py 

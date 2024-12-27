@@ -24,7 +24,7 @@ def saveCoursesActives(token):
     headers = {'content-type':'application/json',"token-de-autenticacao":token}
     request = req.get(url_eureca+"/cursos?status-enum=ATIVOS&campus=1",headers=headers)
     #save coursesActives
-    with open("data/coursesActives.json","w") as courses_file:
+    with open("../data/coursesActives.json","w") as courses_file:
             json.dump(request.json(),courses_file)
     #return r.content
 
@@ -32,7 +32,7 @@ def saveCoursesActives(token):
 def saveStudents(token,inicio="2018.1",fim="2023.2"):
     headers = {'content-type':'application/json',"token-de-autenticacao":token}
     request = req.get(url_eureca+"/estudantes?periodo-de-evasao-de="+inicio+"&periodo-de-evasao-ate="+fim+"&situacao-do-estudante=INATIVOS&campus=1",headers=headers)
-    with open("data/students.json","w") as students_file:
+    with open("../data/students.json","w") as students_file:
         json.dump(request.json(),students_file)
 
 # #Opens file with credentials (credentials.json)
@@ -43,7 +43,7 @@ def saveStudents(token,inicio="2018.1",fim="2023.2"):
 
 
 #Opens file with credentials (token.json)
-token_file = open("data/token.json","r")
+token_file = open("../data/token.json","r")
 
 #loads token.json
 token = json.load(token_file)["token"]

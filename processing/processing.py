@@ -5,40 +5,13 @@ import json
 import pandas as pd
 import numpy as np
 # Mapeamento de dados do bando
-# idade faixas <=15:001, <=18:010, <=21:011, <=25:100, <=30:101, <=40:110, >40:111
-# genero masculino:00 feminino:01 outro:10 descinhecido:11
-# estado_civil solteiro:000 casado:001 separado:010 viuvo:011 divorciado:100 desconhecido:101
-# politica_afirmativa "A0": "0000", "L1": "0001", "L2": "0010", "L5": "0011", "L6": "0100", "L9": "0101", "L10": "0110", "L13": "0111", "L14": "1000", "BONUS": "1001"
-# tipo_de_ensino_medio "PRIVADA": "000", "PUBLICA": "001", "MAJORITARIAMENTE_PUBLICA": "010", "MAJORITARIAMENTE_PRIVADA": "011", "DESCONHECIDA": "100"
-# turno: "Integral":'11',"Matutino":'01',"Noturno":"10"
-# nacionalidade: brasileira:0 estrangeira:1
-# cor: "BRANCA": "001", "PRETA": "010", "PARDA": "10", "INDÍGENA": "011", "MESTIÇA": "100", "ORIENTAL": "101", "OUTRAS": "110"
-# prac_renda_per_capita_ate: Faixa de renda, semelhante ao idade
-# prac_deficiencias: "-": "0", "Sim": "1"
-
-#    # A coluna 'evaded' contem 1 para evadidos e 0 para não evadidos
-#    evadidos = dataframe[dataframe['evaded'] == 1]
-#    nao_evadidos = dataframe[dataframe['evaded'] == 0]
-#   LINHA 117 # Realizando um undersampling, que seria diminuir da classe maior para igualar com a menor
-#    if len(evadidos) < len(nao_evadidos):
-#        nao_evadidos_balanced = nao_evadidos.sample(n=len(evadidos), random_state=42)
-#        dataframe_balanced = pd.concat([evadidos, nao_evadidos_balanced])
-#    else:
-#        evadidos_balanced = evadidos.sample(n=len(nao_evadidos), random_state=42)
-#        dataframe_balanced = pd.concat([evadidos_balanced, nao_evadidos])
-#
-#    # Embaralhar o dataframe
-#    dataframe_balanced = dataframe_balanced.sample(frac=1, random_state=42).reset_index(drop=True)
-#
-# Carrega dicionario com codeCurso/turno
-
 
 def load_large_json(file_path):
     return pd.read_json(file_path)
 
 
 # Mapeamento Setor
-setor_mappint = {
+setor_mappint = { # Atualizado Igual
     "CH - CENTRO DE HUMANIDADES": "001",
     "CCT - CENTRO DE CIÊNCIAS E TECNOLOGIA":"010",
     "CEEI - CENTRO DE ENGENHARIA ELÉTRICA E INFORMÁTICA":"011",
@@ -49,15 +22,14 @@ setor_mappint = {
 
 # Mapeamento binário para valores categóricos
 binary_mappings = {
-    "genero": {"MASCULINO": "0", "FEMININO": "1"},
-    "nacionalidade": {"BRASILEIRA": "0", "ESTRANGEIRA": "1"},
-    "estado_civil": {"SOLTEIRO": "000", "CASADO": "001",  "VIÚVO": "010", "DIVORCIADO": "011","SEPARADO JUDICIALMENTE":"011", "-": "101"},
+    "genero": {"MASCULINO": "0", "FEMININO": "1"}, #Atualizado Igual
+    "estado_civil": {"SOLTEIRO": "001", "CASADO": "010",  "VIÚVO": "100", "DIVORCIADO": "011","SEPARADO JUDICIALMENTE":"011", "-": "000"}, #Atualizado
     "situacao": {"INATIVO": "0", "ATIVO": "1"},
     "politica_afirmativa": {"BON. ESTADUAL": "0010", "L1": "0011", "L2": "0100", "L5": "0101", "L6": "0110", "L9": "0111", "L10": "1000", "L13": "1001", "L14": "1010", "-": "0001", "LI_PPI": "0110", "LI_PCD": "1001", "LI_EP": "0101", "LB_EP": "0011", "LB_Q": "1011", "LB_PPI": "0100", "LB_PCD": "0111"},
-    "tipo_de_ensino_medio": {"SOMENTE ESCOLA PRIVADA": "000", "SOMENTE ESCOLA PÚBLICA": "001", "PÚBLICA E PRIVADA, TENDO FICADO MAIS TEMPO EM ESCOLA PÚBLICA": "010", "PÚBLICA E PRIVADA, TENDO FICADO MAIS TEMPO EM ESCOLA PRIVADA": "011", "-": "100"},
-    "cor": {"BRANCA": "000", "PRETA": "001", "PARDA": "010", "AMARELA": "011", "NÃO DECLARADA": "100", "INDÍGENA":"101","-": "111"},
-    "prac_deficiente": {"NÃO": "00", "SIM": "01", "-": "10"},
-    "turno_do_curso":{"INTEGRAL":'11', "MATUTINO":'01', "NOTURNO":"10"}
+    "tipo_de_ensino_medio": {"SOMENTE ESCOLA PRIVADA": "010", "SOMENTE ESCOLA PÚBLICA": "001", "PÚBLICA E PRIVADA, TENDO FICADO MAIS TEMPO EM ESCOLA PÚBLICA": "011", "PÚBLICA E PRIVADA, TENDO FICADO MAIS TEMPO EM ESCOLA PRIVADA": "100", "-": "000"}, # Atualizado
+    "cor": {"BRANCA": "001", "PRETA": "010", "PARDA": "100", "AMARELA": "101", "NÃO DECLARADA": "000", "INDÍGENA":"011","-": "000"},# Atualizado
+    "prac_deficiente": {"NÃO": "01", "SIM": "10", "-": "00"},# Atualizado
+    "turno_do_curso":{"INTEGRAL":'11', "MATUTINO":'01', "NOTURNO":"10"} #Atualizado Igual
 }
 
 #Mapeamento binário somente para motivo de evasão, pois é muito extenso
@@ -101,7 +73,7 @@ def adjust_secondary_school_type(row):
             return "PUBLICA"
     return row["tipo_de_ensino_medio"]
 # Classificação de taxa de sucesso
-def taxa_binary(taxa_sucesso):
+def taxa_binary(taxa_sucesso): #Atualizado Igual
     if taxa_sucesso <= 0.2:
         return '001'
     elif taxa_sucesso <=0.4:
@@ -113,19 +85,19 @@ def taxa_binary(taxa_sucesso):
     elif taxa_sucesso <=1.0:
         return '101'
 # classificação de cra
-def cra_binary(cra):
+def cra_binary(cra): #Atualizado Igual
     if cra <= 5:
         return '001'
     elif cra <=7:
         return '010'
     elif cra <=8:
-        return '100'
+        return '011'
     elif cra <=10:
-        return '101'
+        return '100'
     else:
         return '000'
 #Classificação de faixa etária
-def age_to_binary(idade):
+def age_to_binary(idade): #Atualizado Igual
     if idade <= 15:
         return '001'
     elif idade <= 18 :
@@ -156,15 +128,8 @@ def income_to_binary(prac_renda_per_capita_ate):
     else:
         return '110'
 
-def getInputOutput(undersampling=True,regressao=False,evadedColumn=False):
-    # Caminho para o arquivo JSON
-    file_path = r'data/students.json'
-    
-    #Carregar os dados
-    dataframe = load_large_json(file_path)
-    # Aleatoriza banco de dados
-    dataframe = dataframe.sample(frac=1,ignore_index=True,random_state=100)
-    #Fazer lista de turnos
+def mapeamentoDataframe(dataframe):
+     #Fazer lista de turnos
     dataframe["tipo_de_ensino_medio"] = dataframe.apply(adjust_secondary_school_type, axis=1)
 
     #Transformando todos os inputs em maiúsculo para padronizar o mapeamento
@@ -198,8 +163,20 @@ def getInputOutput(undersampling=True,regressao=False,evadedColumn=False):
 
     # calcular cra com notas_acumuladas e creditos_do_cra
     dataframe['cra'] = (dataframe["notas_acumuladas"]/dataframe["creditos_do_cra"]).apply(cra_binary)
+    return dataframe
 
-    # Definindo as categorias a serem removidas
+def getInputOutput(undersampling=True,regressao=False,evadedColumn=False):
+    # Caminho para o arquivo JSON
+    file_path = r'../data/students.json'
+    
+    #Carregar os dados
+    dataframe = load_large_json(file_path)
+    # Aleatoriza banco de dados
+    dataframe = dataframe.sample(frac=1,ignore_index=True,random_state=100)
+    
+    dataframe = mapeamentoDataframe(dataframe)
+    # 
+    # Definindo as categorias a serem removidas em Motivo de Evasão
     categorias_para_remover = [
         "000100",
         "001010",
@@ -216,7 +193,7 @@ def getInputOutput(undersampling=True,regressao=False,evadedColumn=False):
     dataframe['evaded'] = dataframe.apply(lambda row: 0 if row['motivo_de_evasao'] in ['000001', '010101'] else 1, axis=1)
 
     # Verificar a proporção de evadidos
-    print(dataframe.value_counts("evaded"))
+    #print(dataframe.value_counts("evaded"))
 
     # Colunas a serem mantidas
     columns_to_keep = ["idade", "genero", "estado_civil", "politica_afirmativa", "tipo_de_ensino_medio", "turno_do_curso", "cor", "prac_renda_per_capita_ate", "prac_deficiente", "nome_do_setor",'taxa_de_sucesso','cra','evaded','motivo_de_evasao']
@@ -287,4 +264,4 @@ def getInputOutput(undersampling=True,regressao=False,evadedColumn=False):
         X_teste = [list(aux2) for aux2 in X_teste]
     columns_to_keep.remove('evaded')
     return(X_treino, Y_treino,X_teste,Y_teste,dataframeCopia,columns_to_keep)
-getInputOutput(undersampling=True,regressao=False)
+#getInputOutput(undersampling=True,regressao=False)
