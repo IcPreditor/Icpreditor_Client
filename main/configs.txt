@@ -1,4 +1,4 @@
-keep_session=false
+keep_session=true
 studentsByCourse=true
 periodoInicio=2020.1
 periodoFim=2024.1

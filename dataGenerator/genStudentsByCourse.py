@@ -25,8 +25,6 @@ token = json.load(token_file)["token"]
 headers = {'content-type':'application/json',"token-de-autenticacao":token}
 
 with open('../data/studentsPrediction.json','w') as studentsPred_file:
-    print(sys.argv)
     students = getStudentsByCourse(curso_id=sys.argv[1],begin=sys.argv[2],end=sys.argv[3])
-    print(students)
     json.dump(students,studentsPred_file)
 

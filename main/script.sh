@@ -31,31 +31,37 @@
 #     echo "Configuração de KEEP_SESSION não encontrada."
 #     ask_keep_session
 # fi
-deleteTemp(){
-	# Deleta credentials temporarias
-	rm ../data/credentials.json
-}
 
+#
 config="configs.txt"
-#Ask for Credentials
-echo 'Login Scao:'
-read login
-
-echo 'Senha:'
-read senha
-
 caminho_arquivo="../data/credentials.json"
 caminho_requirements="../requirements.txt"
+caminho_token="../data/token.json"
 
-#cria arquivo de credentials (temporario)
-mkdir -p "$(dirname "$caminho_arquivo")"
+deleteTemp(){
+	if [-e $caminho_arquivo ]; then
+		# Deleta credentials temporarias
+		rm $caminho_arquivo
+	fi
+}
+#Ask for Credentials
+login(){
+	echo 'Login Scao:'
+	read login
 
-echo "{
-  \"credentials\": {
-    \"username\": \"$login\",
-    \"password\": \"$senha\"
-  }
-}" > "$caminho_arquivo"
+	echo 'Senha:'
+	read senha
+
+	#cria arquivo de credentials (temporario)
+	mkdir -p "$(dirname "$caminho_arquivo")"
+
+	echo "{
+	\"credentials\": {
+		\"username\": \"$login\",
+		\"password\": \"$senha\"
+	}
+	}" > "$caminho_arquivo"
+}
 
 #verifica python instalado
 if command -v python3 &>/dev/null; then
@@ -71,7 +77,7 @@ if [ ! -f $caminho_requirements ]; then
     echo "Arquivo requirements.txt não encontrado!"
     exit 1
 fi
-
+#instalação de módulos necessários
 echo "Conteúdo do requirements.txt:"
 cat $caminho_requirements
 read -p "Deseja instalar os módulos listados em requirements.txt ? (s/n)" resposta
@@ -85,12 +91,35 @@ if [[ "$resposta" == "s" || "$resposta" == "sim" || "$resposta" == "y" || "$resp
 	echo "Instalação concluída!"
 else 
 	echo "Instalação cancelada pelo usuário."
+	deleteTemp
 	exit 1
 fi
+#Config Keep Session
+keep_session_config=$(grep "^keep_session=" "$config")
+if [ -n $keep_session_config ]; then
+	keep_session=${keep_session_config#*=}
+fi
 
-#Gera token
-echo "Fazendo login"
-$python_cmd ../dataGenerator/tokenCheck.py
+if [ $keep_session == "true" ]; then
+	echo "Verificando Existencia de Token"
+	if [ -e $caminho_token ]; then
+		echo "Token encontrado"
+		status_token=$($python_cmd ../dataGenerator/tokenCheck.py 1)
+		echo "Verificando validade do Token"
+		if [ $status_token == "error" ]; then
+			echo "Token invalido, login necessário"
+			login
+		else
+			echo "Token OK"
+		fi
+	else
+		echo "Token não encontrado, login necessário"
+		login
+	fi
+else
+	echo "Login Necessário :"
+	login
+fi
 
 deleteTemp
 
@@ -99,26 +128,21 @@ echo "Recuperando estudantes para treino da Regressão Logistica"
 $python_cmd ../dataGenerator/genStudents.py
 echo "Estudantes de treino Recuperados"
 
-#Config Keep Session
-keep_session_config=$(grep "^keep_session=" "$config")
-if [ -n $keep_session_config ]; then
-	keep_session=${keep_session_config#*=}
-	echo $keep_session
-fi
+
 
 #Config students By Course
 byCourse_config=$(grep "^studentsByCourse=" "$config")
 if [ -n $byCourse_config ]; then
 	byCourse=${byCourse_config#*=}
-	echo $byCourse
 fi
 
 if [ $byCourse == "true" ]; then
+	echo "Busca por curso"
 	#Config codigo do curso
 	courseId_config=$(grep "^cursoId=" "$config")
 	if [ -n $courseId_config ]; then
 		courseId=${courseId_config#*=}
-		echo $courseId
+		echo "Codigo de Curso: " $courseId
 	fi
 	#Config begin 
 	inicio_config=$(grep "^periodoInicio=" "$config")
