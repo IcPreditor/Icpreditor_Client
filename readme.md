@@ -1,43 +1,51 @@
-# ReadMe Provisório
+# DCheck 
 
-## Coloque suas credenciais no arquivo credentials.json
-cd data/credentials.json
+## Utilização da ferramenta
 
-{"credentials":{"username":"matricula","password":"senhaSCAOS#"}}
+### Requisistos
 
-## Instalar dependências
-pip install -r requirements.txt
+Para iniciar a ferramenta é necessário python3 e acesso a internet para download dos modulos python necessários (requirements.txt)
 
-## Gerar arquivo com todos os alunos
-python3 genStudents.py
+Necessário Login SCAO para recuperar os estudantes independente do modo de recuperação.
 
-## Roda o ArtMap Fuzzy
-python3 testeRho.py
+### Arquivo de Configuração
+main/configs.txt
+- Exemplo
 
+```
+keep_session=true
+studentsByCourse=true
+periodoInicio=2020.1
+periodoFim=2024.1
+cursoId=14102100
+```
 
-## Dados importantes:
-### 1977.1 - 2023.2
+#### Configurações
 
+- keep_session 
+    
+    - true: Isso fará com que o token, caso já tenha sido gerado, seja mantido indefinidamente (data/token.json).
+    Em caso de expiração do token, será necessário login.
 
-## Artmap Fuzzy
+    - false: Isso fará com que o token seja excluído após cada interação, o que significa que o login sempre será necessário.
 
-Utilizando biblioteca 'python_artmap' disponibilizada no Git de David Vinicios https://github.com/DavidVinicius/python_artmap
+- studentsByCourse **(Funcionalidade em desenvolvimento, mantenha'true')**
+    
+    - true: Os alunos serão escolhidos com base no código do curso (cursoId) e no semestre de ingresso dentro da faixa determinada (periodoInicio e periodoFim)
 
-## Organização
-'data/' - .json que são lidos pelos scripts
+    - false ****: Os alunos serão escolhidos com base em suas ‘matrículas’/ID, encontradas em ‘matriculas.txt’
 
-'dataGenerator/genStudents.py' -> atualiza students.json (apartir de credentials.json)
+- periodoInicio / periodoFim
+    - string que representa semestres universitários no formato: "ANO.S". S: semestre
 
-'dataGenerator/analisarTaxas.py' -> para debug
+- cursoId 
+    - numero que indentifica unicamente um curso na UFCG. (8 Digits)
 
-'dataGenerator/Contador.py' -> contador para entradas discrepantes (debug)
+### Executando a Ferramenta
+- cd main (Importante!!!)
 
-'dataGenerator/corRacaValidation.py' -> verificar discrepancia de corPrac e corScao
+- Executar script.sh dentro da pasta main.
 
-'processing/processing.py' -> mapeia variváveis de students para binários
+- Aceitar instalar módulos listado (pode ser cancelado, e módulos já instalados não serão instalados novamente)
 
-'processing/data_processing_test.py' -> teste de processing (artifact)
-
-'teste/tabelaGenerator.py' -> apartir de parametros (rhoA e rhoB) roda o treino e teste (70% e 30%)
-
-'teste/testeRho.py' -> roda tabelaGenerator varias vezes usando rhoA e rhoB com valores de 0.1 a 1
+- Realizar login SCAO se necessário
