@@ -39,7 +39,7 @@ caminho_requirements="../requirements.txt"
 caminho_token="../data/token.json"
 
 deleteTemp(){
-	if [-e $caminho_arquivo ]; then
+	if [ -e $caminho_arquivo ]; then
 		# Deleta credentials temporarias
 		rm $caminho_arquivo
 	fi

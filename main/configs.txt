@@ -3,4 +3,3 @@ studentsByCourse=true
 periodoInicio=2020.1
 periodoFim=2024.1
 cursoId=14102100
-saveCsv=false
