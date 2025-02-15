@@ -18,8 +18,9 @@ def genToken(data):
     with open("../data/token.json","w") as token_file:
         json.dump(request.json(),token_file)
     #retorna token
-    if(request.status_code != 201 or request.status_code != 200):
-        print("error")
+    print(request.status_code)
+    if(request.status_code != 201 and request.status_code != 200):
+        print("error token não retornado")
         return
     print("ok")
     return request.json()["token"]
@@ -30,10 +31,10 @@ if (len(sys.argv)>1):
     token = json.load(token_file)["token"]
     status = getProfile(token)
 
-    if(status != 200 or status != 201):
+    if(status != 200 and status != 201):
         print("ok")
     else:
-        print("error")
+        print("error token invalido")
 else:
     #Opens file with credentials (credentials.json)
     credentials = open("../data/credentials.json","r")

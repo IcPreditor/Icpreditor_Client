@@ -61,6 +61,7 @@ login(){
 		\"password\": \"$senha\"
 	}
 	}" > "$caminho_arquivo"
+	$python_cmd ../dataGenerator/tokenCheck.py
 }
 
 #verifica python instalado
@@ -121,7 +122,7 @@ else
 	login
 fi
 
-deleteTemp
+#deleteTemp
 
 echo "Recuperando estudantes para treino da Regressão Logistica"
 # gera estudantes para treino
